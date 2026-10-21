@@ -7,10 +7,12 @@
 <meta name="description" content="A public randomness beacon on Solana. A new signed round every 3 seconds that anyone can check, and pump.fun launches timed by it so snipers can't pre-time them.">
 <meta property="og:title" content="entropynet">
 <meta property="og:description" content="Public randomness every 3 seconds. Launches timed by it, so nobody can snipe the start.">
-<meta property="og:image" content="https://entropynet.vercel.app/og.png">
+<meta property="og:image" content="https://entropynet.space/og.png">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://entropynet.space/">
+<link rel="canonical" href="https://entropynet.space/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://entropynet.vercel.app/og.png">
+<meta name="twitter:image" content="https://entropynet.space/og.png">
 <meta name="theme-color" content="#f2f0e9">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -108,6 +110,7 @@
 <!-- ============ API ============ -->
 <section class="tab" id="tab-api" hidden>
   <div class="panel"><pre class="code">
+<i>// base url: https://entropynet.space</i>
 <b>GET</b> /api/round/latest      <i>// newest round</i>
 <b>GET</b> /api/round/:n          <i>// one round, immutable</i>
 <b>GET</b> /api/round/info        <i>// public key, period, genesis, message format</i>

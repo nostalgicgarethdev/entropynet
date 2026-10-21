@@ -4,7 +4,7 @@
 
 Public randomness every 3 seconds on Solana, and launches nobody can snipe.
 
-Live: https://entropynet.vercel.app
+Live: https://entropynet.space
 
 ## What it does
 - **Beacon.** Every 3 seconds, five nodes reveal secrets they committed to one round earlier. The beacon mixes the reveals with a finalized Solana block hash, links the result to the previous round and signs it with ed25519.

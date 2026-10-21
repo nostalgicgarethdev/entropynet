@@ -1,5 +1,7 @@
 # entropynet beacon spec v1
 
+Base URL: `https://entropynet.space` (API under `/api`).
+
 ## Timing
 - `PERIOD = 3` seconds, `GENESIS = 1792612800` (unix seconds).
 - Round number by clock: `floor((now - GENESIS) / 3)`. Round time: `GENESIS + 3n`.
