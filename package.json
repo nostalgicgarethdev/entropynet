@@ -1,0 +1,2 @@
+{ "name": "entropynet", "private": true, "type": "module", "engines": {"node": "24.x"},
+  "dependencies": { "@vercel/blob": "^1.1.1" } }

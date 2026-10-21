@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>entropynet · public randomness for fair launches</title>
+<meta name="description" content="A public randomness beacon on Solana. A new signed round every 3 seconds that anyone can check, and pump.fun launches timed by it so snipers can't pre-time them.">
+<meta property="og:title" content="entropynet">
+<meta property="og:description" content="Public randomness every 3 seconds. Launches timed by it, so nobody can snipe the start.">
+<meta property="og:image" content="https://entropynet.vercel.app/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://entropynet.vercel.app/og.png">
+<meta name="theme-color" content="#f2f0e9">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<script src="/config.js"></script>
+</head>
+<body>
+<div class="ca-strip" id="castrip"><span class="k">ca</span><code id="ca">not launched yet</code><button id="cacopy" disabled>copy</button></div>
+<header class="top">
+  <a class="brand" href="#beacon">entropy<b>net</b></a>
+  <nav class="tabs" id="tabs">
+    <a href="#beacon" data-tab="beacon">[1] beacon</a>
+    <a href="#launches" data-tab="launches">[2] launches</a>
+    <a href="#verify" data-tab="verify">[3] verify</a>
+    <a href="#api" data-tab="api">[4] api</a>
+    <a href="#faq" data-tab="faq">[5] faq</a>
+  </nav>
+  <span class="clock" id="clock">round ……</span>
+</header>
+
+<main>
+<!-- ============ BEACON ============ -->
+<section class="tab" id="tab-beacon">
+  <div class="hero">
+    <pre class="wordmark" id="wordmark" aria-label="entropynet"></pre>
+    <p class="lede">Public randomness, every <span class="hl">3 seconds</span>. Anyone can check it. Nobody can predict it.<br>We use it to time pump.fun launches, so snipers can't pre-time the start.</p>
+    <div class="hero-meta" id="herometa">
+      <span>round <b id="h-round">…</b></span><span>next in <b id="h-next">…</b></span><span>slot <b id="h-slot">…</b></span><span>nodes <b>5/5</b></span>
+    </div>
+  </div>
+
+  <div class="panel field-panel">
+    <div class="ptitle"><span>┌─ live entropy field</span><span class="dim" id="f-hash">…</span></div>
+    <pre class="field" id="field" aria-hidden="true"></pre>
+    <div class="pfoot"><span>each round redraws the field from its output · darker = higher nibble</span><a href="#verify" id="f-verify">verify this round →</a></div>
+  </div>
+
+  <h2 class="sh">// what it does</h2>
+  <div class="grid3">
+    <div class="box"><div class="bt">[1] nodes commit</div><p>Every round, five nodes each lock in a secret number by publishing only its hash. They can't change it later.</p></div>
+    <div class="box"><div class="bt">[2] reveal and mix</div><p>On the next tick they reveal. The beacon checks each reveal against its hash, mixes them with a fresh finalized Solana block hash and the previous round.</p></div>
+    <div class="box"><div class="bt">[3] sign and chain</div><p>The result is signed with the beacon's ed25519 key and linked to the round before it. Change any round and every later one breaks.</p></div>
+  </div>
+
+  <h2 class="sh">// round stream</h2>
+  <div class="panel"><pre class="stream" id="stream"></pre></div>
+
+  <h2 class="sh">// why launches need it</h2>
+  <div class="grid3">
+    <div class="box"><div class="bt">no pre-timed snipes</div><p>The creator picks a window, like "sometime in the next 10 minutes". A beacon round picks the exact second. Bots can't know it in advance.</p></div>
+    <div class="box"><div class="bt">fair first buy</div><p>Optional raffle: people sign up before the window opens, and a later round draws who gets the first buy. The creator can't pick a friend.</p></div>
+    <div class="box"><div class="bt">entropy receipt</div><p>Every launch gets a public receipt naming the rounds that decided it, with the math, so anyone can re-run it.</p></div>
+  </div>
+</section>
+
+<!-- ============ LAUNCHES ============ -->
+<section class="tab" id="tab-launches" hidden>
+  <div class="mode" id="mode">mode: <b>paper</b> · launches are simulated · nothing is sent on-chain</div>
+  <div class="two">
+    <form class="panel json" id="lform" autocomplete="off">
+      <div class="ptitle"><span>┌─ new fair launch</span></div>
+<pre>{
+  "<b>name</b>":   <input name="name" maxlength="32" placeholder="Your coin" required>,
+  "<b>ticker</b>": <input name="ticker" maxlength="10" placeholder="TICKER" required>,
+  "<b>about</b>":  <input name="description" maxlength="200" placeholder="optional">,
+  "<b>creator</b>":<input name="creator" maxlength="44" placeholder="your wallet (optional)">,
+  "<b>window_opens_in</b>": <select name="start_in_minutes"><option>2</option><option selected>5</option><option>15</option><option>60</option></select>, <i>// minutes</i>
+  "<b>window_length</b>":   <select name="window_minutes"><option>3</option><option selected>10</option><option>30</option><option>60</option></select>, <i>// minutes</i>
+  "<b>first_buy_raffle</b>": <label class="tog"><input type="checkbox" name="raffle" checked><span></span></label>
+}</pre>
+      <p class="hint">Signups close when the window opens. Then the first beacon round after that point picks the launch second inside the window. The round at that second draws the raffle.</p>
+      <button class="btn" type="submit">schedule launch →</button><span class="err" id="lerr"></span>
+    </form>
+    <div class="panel">
+      <div class="ptitle"><span>┌─ board</span><span class="dim" id="lcount"></span></div>
+      <div id="board" class="board"><p class="dim">// loading</p></div>
+    </div>
+  </div>
+  <div class="panel" id="receipt" hidden></div>
+</section>
+
+<!-- ============ VERIFY ============ -->
+<section class="tab" id="tab-verify" hidden>
+  <div class="panel">
+    <div class="ptitle"><span>┌─ verifier · runs in your browser</span></div>
+    <div class="vrow"><label>round <input id="vn" inputmode="numeric" placeholder="latest"></label><button class="btn" id="vgo">verify</button><button class="btn ghost" id="vsol">also check solana block</button></div>
+    <pre class="vout" id="vout">// pick a round, or press verify for the latest one</pre>
+  </div>
+  <p class="hint">Nothing here trusts our server. Your browser downloads the round and the round before it, re-hashes every reveal, rebuilds the signed message and checks the ed25519 signature against the beacon key pinned in this page.</p>
+</section>
+
+<!-- ============ API ============ -->
+<section class="tab" id="tab-api" hidden>
+  <div class="panel"><pre class="code">
+<b>GET</b> /api/round/latest      <i>// newest round</i>
+<b>GET</b> /api/round/:n          <i>// one round, immutable</i>
+<b>GET</b> /api/round/info        <i>// public key, period, genesis, message format</i>
+<b>GET</b> /api/launch            <i>// launch board</i>
+<b>GET</b> /api/launch/:id        <i>// one launch + its entropy receipt</i>
+
+<i>// verify by hand</i>
+commit_i      = sha256(reveal_i)
+mix           = sha256(reveal_1 ‖ … ‖ reveal_5)
+message       = "entropynet/v1|round|prev_round|prev_randomness|mix|slot|blockhash|time"
+randomness    = sha256(message)
+signature     = ed25519(message + "|" + randomness)
+beacon key    = <span id="apikey">…</span>
+
+<i>// source, spec and ci</i>
+<a href="https://github.com/nostalgicgarethdev/entropynet" rel="noopener">github.com/nostalgicgarethdev/entropynet</a>
+</pre></div>
+  <div class="panel"><div class="ptitle"><span>┌─ /api/round/latest</span></div><pre class="code small" id="apilive">…</pre></div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="tab" id="tab-faq" hidden>
+  <div class="faq" id="faqlist">
+    <details open><summary>What is a randomness beacon?</summary><p>A public service that puts out a fresh random number on a fixed schedule. Everyone sees the same number at the same time, and anyone can check it wasn't rigged.</p></details>
+    <details><summary>Why can't the beacon cheat?</summary><p>Each node locks its secret in with a hash one round early, so it can't swap it after seeing the others. A finalized Solana block hash goes in too, which nobody controls. Every round is signed and chained to the last, so history can't be quietly rewritten.</p></details>
+    <details><summary>Who runs the nodes?</summary><p>Right now, five nodes run by entropynet. The commit-reveal and the Solana block hash are there so you don't have to take our word for it. Outside node operators are next.</p></details>
+    <details><summary>How does a fair launch work?</summary><p>You set a window, say "opens in 5 minutes, lasts 10". When it opens, the first beacon round after that point picks the exact second inside the window. Nobody knows that second beforehand, including you.</p></details>
+    <details><summary>What's the first-buy raffle?</summary><p>People drop their wallet before the window opens. At the launch second, that round's randomness draws one winner, who gets the first buy. The receipt shows the round and the math.</p></details>
+    <details><summary>Are launches real yet?</summary><p>Not yet. Launches run in paper mode: the timing, the raffle and the receipts are real, but no coin is created on-chain. Live pump.fun launching is switched off until it's ready.</p></details>
+    <details><summary>Does it cost anything?</summary><p>Using the beacon and the API is free. Live launches will cost the usual pump.fun rent and fees from your wallet.</p></details>
+    <details><summary>Can I use the beacon for my own thing?</summary><p>Yes. Raffles, giveaways, game seeds, picking winners. Read /api/round/latest and point people to the verifier.</p></details>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <span>entropynet · public randomness on solana</span>
+  <span>ca <code id="ca2">not launched yet</code></span>
+  <a href="https://github.com/nostalgicgarethdev/entropynet" rel="noopener">github</a>
+  <span class="dim">beacon key <code id="fkey">…</code></span>
+</footer>
+<script src="/app.js" type="module"></script>
+</body>
+</html>
