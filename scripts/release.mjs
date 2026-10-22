@@ -10,7 +10,8 @@ const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.a
 const policy = JSON.parse(fs.readFileSync(path.join(root, 'seal.policy.json'), 'utf8'));
 const secrets = process.env.ENTROPYNET_KEYS_DIR || '/workspace/tt2-secrets';
 const keys = (arg('--sign') || `${secrets}/entropynet-seal-signer-1.json,${secrets}/entropynet-seal-signer-2.json`).split(',');
-const payer = arg('--anchor') || `${secrets}/entropynet-seal-devnet-payer.json`;
+const cluster = arg('--cluster') || policy.anchor_cluster || 'devnet';
+const payer = arg('--anchor') || `${secrets}/entropynet-seal-${cluster === 'devnet' ? 'devnet' : 'mainnet'}-payer.json`;
 for (const k of ['VERCEL', 'CI', 'RAILWAY_ENVIRONMENT']) if (process.env[k]) { console.error(`refusing to sign: ${k} is set. Seal keys never run on the host or CI.`); process.exit(1); }
 
 execFileSync('node', [path.join(root, 'packages/verifier/build.mjs')], { stdio: 'inherit' });
@@ -25,7 +26,7 @@ let r = await draft(stage, { prev, uri: 'https://entropynet.space' + RELEASE_PAT
 for (const k of keys) r = sign(r, k);
 const c = check(r, policy, stage);
 if (!c.ok) { console.error('release fails policy:', c.reasons); process.exit(1); }
-if (!process.argv.includes('--no-anchor')) r = await anchor(r, payer, { cluster: policy.anchor_cluster || 'devnet', rpc: process.env.ENTROPYNET_DEVNET_RPC || undefined });
+if (!process.argv.includes('--no-anchor')) r = await anchor(r, payer, { cluster, rpc: (cluster === 'devnet' ? process.env.ENTROPYNET_DEVNET_RPC : process.env.ENTROPYNET_MAINNET_RPC) || undefined });
 fs.mkdirSync(path.join(site, 'seal'), { recursive: true });
 fs.writeFileSync(path.join(site, RELEASE_PATH.slice(1)), JSON.stringify(r, null, 1));
 console.log(JSON.stringify({ id: r.id, files_root: r.files_root, files: Object.keys(r.files).length, round: r.beacon.round, signers: c.valid, anchor: r.anchor }, null, 1));

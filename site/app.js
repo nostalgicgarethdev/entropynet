@@ -237,7 +237,7 @@ async function openReceipt(id) {
   if (L.live && L.status === 'live' && L.raffle_result) extra += `<div class="vrow"><span class="dim">raffle winner: buy first from here (your wallet signs and pays)</span><label>sol <input id="wbsol" value="0.1" style="width:6ch"></label><button class="btn ghost wallet-btn">${wallet ? wallet.slice(0, 4) + '…' : 'connect wallet'}</button><button class="btn" id="wbbtn">buy</button></div><pre class="rc" id="wbout"></pre>`;
   const keepOut = $('#lout')?.textContent;
   box.innerHTML = `<div class="ptitle"><span>┌─ entropy receipt</span><span class="dim">${now < L.window_start ? 'window opens in ' + Math.ceil(L.window_start - now) + 's' : ''}</span></div><pre class="rc">{\n  ${lines.join('\n  ')}\n}</pre>${extra}` +
-    (L.onchain ? `<div class="pfoot"><a href="${L.onchain.pump}" target="_blank" rel="noopener">open on pump.fun →</a><a href="#verify/${L.fire.round}">verify round ${L.fire.round} →</a></div>` : L.fire ? `<div class="pfoot"><span>fired by round ${L.fire.round}</span><a href="#verify/${L.fire.round}">verify →</a></div>` : L.timing ? `<div class="pfoot"><span>re-run: sha256(randomness + "|launch|${L.id}") mod ${L.window_seconds}</span><a href="#verify/${L.timing.round}">verify round ${L.timing.round} →</a></div>` : '');
+    (L.onchain ? `<div class="pfoot"><a href="${L.onchain.pump}" target="_blank" rel="noopener">open on pump.fun →</a><a href="#verify/${L.fire.round}">verify round ${L.fire.round} →</a><a href="#check/mkpage/${L.onchain.mint}/${encodeURIComponent(L.ticker || '')}/${encodeURIComponent(L.name || '')}">launch a sealed page →</a></div>` : L.fire ? `<div class="pfoot"><span>fired by round ${L.fire.round}</span><a href="#verify/${L.fire.round}">verify →</a></div>` : L.timing ? `<div class="pfoot"><span>re-run: sha256(randomness + "|launch|${L.id}") mod ${L.window_seconds}</span><a href="#verify/${L.timing.round}">verify round ${L.timing.round} →</a></div>` : '');
   if (keepOut && $('#lout')) $('#lout').textContent = keepOut;
   const sb = $('#sbtn'); if (sb) sb.onclick = async () => { const r = await post({ action: 'signup', id, wallet: $('#sw').value.trim() }); if (r.error) $('#serr').textContent = r.error; else openReceipt(id); };
   const wb = $('#wbbtn'); if (wb) wb.onclick = async () => { if (!wallet) await connectWallet(); winnerBuy(L, $('#wbout')); };
@@ -290,7 +290,7 @@ function renderSeal(m) {
   $('#s-sig').textContent = `${st.signers.length} of ${st.policy.length} (need ${st.threshold})`;
   $('#s-badge').textContent = sigOk ? '[ok] verified in your browser' : '[!!] not verified';
   const tx = st.anchor && st.anchor.tx;
-  const txl = tx ? `<a href="https://explorer.solana.com/tx/${tx}?cluster=${st.anchor.cluster}" target="_blank" rel="noopener">${short(tx, 12)}</a>` : '-';
+  const txl = tx ? `<a href="https://explorer.solana.com/tx/${tx}${st.anchor.cluster === 'devnet' ? '?cluster=devnet' : ''}" target="_blank" rel="noopener">${short(tx, 12)}</a>` : '-';
   const M = { ok: '<span class="mk-ok">[OK]</span>  ', warn: '<span class="mk-warn">[warn]</span>', star: '[*]  ', go: '[>]  ' };
   const anc = st.anchor_status || 'checking';
   $('#sealstatus').innerHTML = [
@@ -359,3 +359,61 @@ $('#sdir').onchange = async (e) => {
   out.textContent = `files root  ${root}\nfiles       ${Object.keys(files).length}\n\n` + Object.entries(files).slice(0, 40).map(([p, h]) => `${h.slice(0, 16)}…  ${p}`).join('\n') + (Object.keys(files).length > 40 ? '\n…' : '') +
     `\n\nnext: run the same on your build machine and sign it.\nnpx entropynet seal ./dist  →  root should equal ${root.slice(0, 16)}…`;
 };
+
+/* ---------- check a site ---------- */
+async function runCheck(u) {
+  const out = $('#ckout'); if (!u) return;
+  out.textContent = `$ entropynet check ${u}\n[*] fetching…`;
+  try {
+    const r = await (await fetch('/api/check?url=' + encodeURIComponent(u))).json();
+    if (r.error) { out.innerHTML = `<span class="mk-bad">[!]</span> ${esc(r.error)}`; return; }
+    const rows = (r.steps || []).map(s => `${s.ok ? '<span class="mk-ok">[OK]</span>' : '<span class="mk-bad">[!!]</span>'}  ${esc(s.k.padEnd(10))} ${esc(s.msg)}`).join('\n');
+    const head = r.sealed ? '<span class="mk-ok">[*] SEALED</span>' : '<span class="mk-bad">[!] NOT SEALED</span>';
+    const tx = r.anchor ? `\nrecord     <a href="https://explorer.solana.com/tx/${esc(r.anchor.tx)}${r.anchor.cluster === 'devnet' ? '?cluster=devnet' : ''}" target="_blank" rel="noopener">${esc(r.anchor.cluster)} tx ${esc(r.anchor.tx.slice(0, 16))}…</a>` : '';
+    $('#mkbox').hidden = !!r.sealed;
+    out.innerHTML = `$ entropynet check ${esc(r.origin || r.input || u)}\n${rows}\n\n┌──────── receipt ────────\n│ ${head}\n│ ${esc(r.reason || '')}${r.release ? '\n│ release ' + esc(r.release.slice(0, 32)) + '…' : ''}\n│ checked ${esc(r.checked_at || '')}${r.cached ? ' (cached)' : ''}\n└─────────────────────────${tx}`;
+  } catch { out.innerHTML = '<span class="mk-bad">[!]</span> check failed, try again'; }
+}
+$('#ckform').addEventListener('submit', e => { e.preventDefault(); const u = $('#ckurl').value.trim(); location.hash = '#check/' + encodeURIComponent(u); });
+$('#ckdemo').addEventListener('click', () => { $('#ckurl').value = 'https://entropynet.space'; location.hash = '#check/' + encodeURIComponent('https://entropynet.space'); });
+const ckFromHash = () => { const k = location.hash.match(/^#check\/mkpage\/([^/]+)\/?([^/]*)\/?(.*)$/); if (k) { $('#mkbox').hidden = false; const f = $('#mkform'); f.mint.value = k[1]; f.ticker.value = decodeURIComponent(k[2] || ''); f.name.value = decodeURIComponent(k[3] || ''); f.slug.value ||= (decodeURIComponent(k[2] || '') || k[1].slice(0, 8)).toLowerCase().replace(/[^a-z0-9-]/g, ''); return; } const m = location.hash.match(/^#check\/(.+)/); if (m) { const u = decodeURIComponent(m[1]); $('#ckurl').value = u; runCheck(u); } };
+ckFromHash(); addEventListener('hashchange', ckFromHash);
+
+/* ---------- launch a sealed page: creator wallet signs the content; code is our sealed template ---------- */
+const SITE_FIELDS = ['slug', 'mint', 'name', 'ticker', 'about', 'x', 'telegram', 'website', 'creator', 'created'];
+const siteMsg = (d) => 'entropynet-site/v1\n' + SITE_FIELDS.map(k => `${k}=${d[k] ?? ''}`).join('\n');
+let lastPage = null;
+$('#mkform').addEventListener('submit', async (e) => {
+  e.preventDefault(); const o = $('#mkout'); const f = e.target;
+  try {
+    const creator = wallet || await connectWallet();
+    const d = { created: Math.floor(Date.now() / 1000), creator };
+    for (const k of ['slug', 'mint', 'name', 'ticker', 'about', 'x', 'telegram', 'website']) d[k] = f[k].value.trim();
+    d.slug = d.slug.toLowerCase();
+    if (!f.ok.checked) throw new Error('tick the confirm box first');
+    o.textContent = '[*] sign the page content in your wallet (a message, not a transaction, no SOL)…';
+    const sig = await provider().signMessage(new TextEncoder().encode(siteMsg(d)), 'utf8');
+    const bytes = sig.signature || sig; const hex = [...bytes].map(x => x.toString(16).padStart(2, '0')).join('');
+    const r = await (await fetch('/api/site', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, signature: hex }) })).json();
+    if (!r.ok) throw new Error(r.error);
+    lastPage = r.page;
+    o.innerHTML = `<span class="mk-ok">[OK]</span>  page   <a href="/s/${esc(d.slug)}" target="_blank">entropynet.space/s/${esc(d.slug)}</a>\n<span class="mk-ok">[OK]</span>  code   sealed 2-of-3 (entropynet release)\n<span class="mk-ok">[OK]</span>  content signed by ${esc(creator.slice(0, 4))}…${esc(creator.slice(-4))}\n[*]   optional: record it on solana (${esc(r.page.cluster)}), your wallet pays the ~0.000005 SOL fee <button class="btn ghost" id="mkrec">record</button>`;
+    $('#mkrec').onclick = () => recordPage(lastPage).catch(x => o.innerHTML += `\n<span class="mk-bad">[!]</span> ${esc(x.message)}`);
+  } catch (x) { o.innerHTML = `<span class="mk-bad">[!]</span> ${esc(x.message || x)}`; }
+});
+async function recordPage(p) {
+  const o = $('#mkout'); const cl = p.cluster === 'devnet' ? 'devnet' : 'mainnet';
+  const rpc = (m, params) => fetch('/api/relay?cluster=' + cl, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: m, params }) }).then(r => r.json());
+  const w3 = await web3();
+  const bh = (await rpc('getLatestBlockhash', [{ commitment: 'confirmed' }])).result.value.blockhash;
+  const memo = `entropynet-site/v1 slug=${p.slug} sha=${p.message_sha256}`;
+  const prog = cl === 'devnet' ? 'Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo' : 'MemoSq4gqABAXKb96qnH8TyNmLxPf8YNXqU1zWvkeNA';
+  const payer = new w3.PublicKey(p.creator);
+  const msg = new w3.TransactionMessage({ payerKey: payer, recentBlockhash: bh, instructions: [new w3.TransactionInstruction({ programId: new w3.PublicKey(prog), keys: [{ pubkey: payer, isSigner: true, isWritable: false }], data: new TextEncoder().encode(memo) })] }).compileToV0Message();
+  const signed = await walletSign(bytesToB64(new w3.VersionedTransaction(msg).serialize()));
+  o.innerHTML += '\n[*]   sending…';
+  const s = await rpc('sendTransaction', [signed, { encoding: 'base64' }]); if (!s.result) throw new Error(s.error?.message || 'send failed');
+  const r = await (await fetch('/api/site', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ op: 'record', slug: p.slug, tx: s.result }) })).json();
+  if (!r.ok) throw new Error(r.error);
+  o.innerHTML += `\n<span class="mk-ok">[OK]</span>  record <a href="https://explorer.solana.com/tx/${esc(s.result)}${cl === 'devnet' ? '?cluster=devnet' : ''}" target="_blank" rel="noopener">${esc(s.result.slice(0, 16))}…</a>`;
+}

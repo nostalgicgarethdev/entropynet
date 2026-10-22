@@ -15,6 +15,10 @@
    "destination": "/api/tamper?id=:id"
   },
   {
+   "source": "/s/:slug",
+   "destination": "/s/index.html"
+  },
+  {
    "source": "/api/seal/:id",
    "destination": "/api/seal?id=:id"
   }

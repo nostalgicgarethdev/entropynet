@@ -124,9 +124,11 @@ async function guard(e) {
   const s = await refresh(req.mode === 'navigate');
   if (!s) return fetch(req);   // no valid release could be loaded: fail open, but say so in the UI (see FAQ)
   const key = url.pathname.endsWith('/') ? url.pathname + 'index.html' : url.pathname;
-  const want = s.release.files[key] || (req.mode === 'navigate' ? s.release.files['/index.html'] : undefined);
+  // navigations to unsealed paths fall back to a sealed shell: /s/<slug> -> /s/index.html (sealed mini-sites), else /index.html
+  const shell = url.pathname.startsWith('/s/') && s.release.files['/s/index.html'] ? '/s/index.html' : '/index.html';
+  const want = s.release.files[key] || (req.mode === 'navigate' ? s.release.files[shell] : undefined);
   const dest = req.mode === 'navigate' ? 'document' : req.destination;
-  const res = await fetch(req.mode === 'navigate' ? new Request(url.origin + (s.release.files[key] ? key : '/index.html'), { cache: 'no-cache' }) : new Request(req, { cache: 'no-cache' }));
+  const res = await fetch(req.mode === 'navigate' ? new Request(url.origin + (s.release.files[key] ? key : shell), { cache: 'no-cache' }) : new Request(req, { cache: 'no-cache' }));
   if (!want) {
     if (!CHECKED.has(dest) || !res.ok) return res;
     return block(e, { path: key, want: 'not in the sealed release', got: 'unsigned file', dest });

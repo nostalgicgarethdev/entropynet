@@ -29,11 +29,12 @@
   <a class="brand" href="#seal">entropy<b>net</b></a>
   <nav class="tabs" id="tabs">
     <a href="#seal" data-tab="seal">[1] seal</a>
-    <a href="#beacon" data-tab="beacon">[2] beacon</a>
-    <a href="#launches" data-tab="launches">[3] launches</a>
-    <a href="#verify" data-tab="verify">[4] verify</a>
-    <a href="#api" data-tab="api">[5] api</a>
-    <a href="#faq" data-tab="faq">[6] faq</a>
+    <a href="#check" data-tab="check">[2] check</a>
+    <a href="#beacon" data-tab="beacon">[3] beacon</a>
+    <a href="#launches" data-tab="launches">[4] launches</a>
+    <a href="#verify" data-tab="verify">[5] verify</a>
+    <a href="#api" data-tab="api">[6] api</a>
+    <a href="#faq" data-tab="faq">[7] faq</a>
   </nav>
   <a class="xlink" href="https://x.com/entropynet_" target="_blank" rel="noopener" aria-label="entropynet on X">[x]</a>
   <span class="clock" id="clock">round ……</span>
@@ -184,6 +185,32 @@ npx entropynet verify ./dist</pre>
   <div class="panel" id="receipt" hidden></div>
 </section>
 
+<!-- ============ CHECK ============ -->
+<section class="tab" id="tab-check" hidden>
+  <div class="panel">
+    <div class="ptitle"><span>┌─ check a site · is it sealed?</span></div>
+    <form class="vrow" id="ckform"><label>url <input id="ckurl" placeholder="https://entropynet.space" autocomplete="off" spellcheck="false"></label><button class="btn" id="ckgo">check</button><button type="button" class="btn ghost" id="ckdemo">try entropynet.space</button></form>
+    <pre class="vout" id="ckout">// paste a site. we fetch its seal manifest, signer policy and a few live files (plain GETs, nothing else)</pre>
+  </div>
+  <div class="panel" id="mkbox" hidden>
+    <div class="ptitle"><span>┌─ not sealed? launch a sealed page for your coin</span></div>
+    <form id="mkform" class="vrow" style="flex-wrap:wrap;gap:8px">
+      <label>slug <input name="slug" maxlength="44" placeholder="mycoin" required></label>
+      <label>ca <input name="mint" placeholder="coin mint address" style="width:44ch" required></label>
+      <label>name <input name="name" maxlength="32" required></label>
+      <label>ticker <input name="ticker" maxlength="10"></label>
+      <label>about <input name="about" maxlength="280" style="width:40ch"></label>
+      <label>x <input name="x" placeholder="https://x.com/…"></label>
+      <label>telegram <input name="telegram" placeholder="https://t.me/…"></label>
+      <label>website <input name="website" placeholder="https://…"></label>
+      <label class="dim"><input type="checkbox" name="ok"> I'm the creator and this CA is mine</label>
+      <button class="btn ghost wallet-btn" type="button">connect wallet</button><button class="btn">sign &amp; launch page</button>
+    </form>
+    <pre class="vout" id="mkout">// your page lives at entropynet.space/s/&lt;slug&gt;. its code is our sealed 2-of-3 release + browser verifier; its content is signed by your wallet. 5 pages an hour per ip, slugs belong to the first wallet.</pre>
+  </div>
+  <p class="hint">SEALED means: a signed entropynet-seal/v1 manifest at /seal/release.json meets the 2-of-3 style threshold of the signer policy at /seal/policy.json, the release id is recorded on Solana, and the live index and main scripts hash to what was sealed. It is not a promise the site is "hack-proof" — it says the code you get is the code its team signed. NOT SEALED means missing seal, bad signatures, no on-chain record, a hash mismatch, or unreachable. No vulnerability scanning, no probing.</p>
+</section>
+
 <!-- ============ VERIFY ============ -->
 <section class="tab" id="tab-verify" hidden>
   <div class="panel">
@@ -199,6 +226,8 @@ npx entropynet verify ./dist</pre>
   <div class="panel"><pre class="code">
 <i>// base url: https://entropynet.space</i>
 <b>GET</b> /api/round/latest      <i>// newest round</i>
+<b>GET</b> /api/check?url=        <i>// is a site sealed? passive, cached 60s</i>
+<b>GET</b> /api/site?slug=        <i>// a sealed coin page (creator-signed)</i>
 <b>GET</b> /api/round/:n          <i>// one round, immutable</i>
 <b>GET</b> /api/round/info        <i>// public key, period, genesis, message format</i>
 <b>GET</b> /api/launch            <i>// launch board</i>
