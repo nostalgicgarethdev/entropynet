@@ -1,0 +1,10 @@
+{
+ "spec": "entropynet-seal/v1",
+ "threshold": 2,
+ "signers": [
+  "J5nybktmcYMC1mgviFTPVBsDEBqDQ48of1597ouQF6BC",
+  "FjmNawh7JvwBCbjzLZaVPVBeVnHKLTNyeUAoDDe7cGza",
+  "GfMBzPB48BERdyaxhMRUsHVnDntX3MgL29rALBzed8UM"
+ ],
+ "anchor_cluster": "devnet"
+}

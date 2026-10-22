@@ -14,10 +14,11 @@ $('#fkey').textContent = CFG.beaconPublicKey.slice(0, 16) + '…'; $('#apikey').
 
 /* ---------- tabs ---------- */
 function showTab() {
-  const t = (location.hash.slice(1) || 'beacon').split('/')[0];
+  const t = (location.hash.slice(1) || 'seal').split('/')[0];
   document.querySelectorAll('.tab').forEach(s => s.hidden = s.id !== 'tab-' + t);
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.tab === t); if (a.dataset.tab === t) a.scrollIntoView({ inline: 'nearest', block: 'nearest' }); });
   if (t === 'launches') loadBoard(location.hash.split('/')[1]);
+  if (t === 'seal') loadFeed();
   if (t === 'api') loadApi();
 }
 addEventListener('hashchange', () => { showTab(); scrollTo(0, 0); });
@@ -102,7 +103,7 @@ async function edVerify(pubHex, sigHex, msg) {
     return ed.verifyAsync(unhex(sigHex), enc.encode(msg), unhex(pubHex));
   }
 }
-const msgOf = (r) => ['entropynet/v1', r.round, r.prev_round, r.prev_randomness, r.mix, r.solana.slot, r.solana.blockhash, r.time].join('|');
+const msgOf = (r) => ['entropynet/v1', r.round, r.prev_round, r.prev_randomness, r.mix, r.solana.slot, r.solana.blockhash, r.time].join('|') + (r.seal ? '|seal:' + r.seal : '');
 export async function verifyRound(r, prev) {
   const res = [];
   const ok = (c, label) => res.push([!!c, label]);
@@ -275,3 +276,86 @@ showTab();
 const vh = location.hash.match(/^#verify\/(\d+)/); if (vh) runVerify(vh[1]);
 addEventListener('hashchange', () => { const m = location.hash.match(/^#verify\/(\d+)/); if (m) runVerify(m[1]); });
 document.querySelector('.file input')?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.nextElementSibling.textContent = f ? f.name.slice(0, 24) : 'choose file'; });
+
+/* ---------- seal: verifier status, tamper test, tamper feed, seal-your-site ---------- */
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const short = (h, n = 10) => h ? h.slice(0, n) + '…' + h.slice(-6) : '-';
+const ago = (ms) => { const s = Math.max(0, Math.round((Date.now() - ms) / 1000)); return s < 60 ? s + 's ago' : s < 3600 ? Math.round(s / 60) + 'm ago' : s < 86400 ? Math.round(s / 3600) + 'h ago' : Math.round(s / 86400) + 'd ago'; };
+function renderSeal(m) {
+  const st = m.state;
+  if (!st) { $('#s-state').textContent = 'not yet'; $('#s-badge').textContent = 'no release'; $('#sealstatus').textContent = '// the verifier is installed but no signed release was found yet.'; return; }
+  const sigOk = st.signers.length >= st.threshold;
+  $('#s-state').textContent = sigOk ? 'verified' : 'NOT VERIFIED';
+  $('#s-rel').textContent = st.id.slice(0, 10);
+  $('#s-sig').textContent = `${st.signers.length} of ${st.policy.length} (need ${st.threshold})`;
+  $('#s-badge').textContent = sigOk ? '[ok] verified in your browser' : '[!!] not verified';
+  const tx = st.anchor && st.anchor.tx;
+  const txl = tx ? `<a href="https://explorer.solana.com/tx/${tx}?cluster=${st.anchor.cluster}" target="_blank" rel="noopener">${short(tx, 12)}</a>` : '-';
+  const M = { ok: '<span class="mk-ok">[OK]</span>  ', warn: '<span class="mk-warn">[warn]</span>', star: '[*]  ', go: '[>]  ' };
+  const anc = st.anchor_status || 'checking';
+  $('#sealstatus').innerHTML = [
+    `<span class="dim">visitor@entropynet.space:~</span> <span class="hl">[${sigOk ? 'sealed' : 'UNSEALED'}]</span>`,
+    `<span class="dim">$</span> entropynet status`,
+    ``,
+    `${M.star} release     ${short(st.id, 16)}`,
+    `${M.star} files root  ${short(st.files_root, 16)}`,
+    `${M.star} files       ${st.files} pinned · ${new Date(st.created * 1000).toISOString().replace('T', ' ').slice(0, 16)} utc`,
+    `${M.star} beacon      <a href="#verify/${st.beacon.round}">round ${st.beacon.round}</a>`,
+    ``,
+    `    ┌─ signers ${'─'.repeat(23)}┐`,
+    ...st.policy.map(p => `    │ ${st.signers.includes(p) ? '<span class="mk-ok">[x]</span>' : '[ ]'} ${short(p, 10)}${' '.repeat(Math.max(1, 21 - short(p, 10).length))}${st.signers.includes(p) ? 'signed  ' : '—       '}│`),
+    `    └${'─'.repeat(33)}┘`,
+    ``,
+    `${sigOk ? M.ok : '<span class="mk-bad">[FAIL]</span>'} threshold   ${st.signers.length} of ${st.policy.length}, need ${st.threshold}`,
+    `${/confirmed/.test(anc) ? M.ok : M.warn} solana      ${txl} ${esc(anc)}`,
+    `${st.first_visit ? M.warn : M.ok} trust       ${st.first_visit ? 'first visit · trust on first use (faq)' : 'pinned · updates need ' + st.threshold + ' sigs'}`,
+    `${M.ok} verifier    checking every page, script, style`,
+  ].join('\n');
+}
+const swOn = 'serviceWorker' in navigator;
+if (swOn) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => { $('#s-state').textContent = 'unsupported here'; });
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data.type === 'status' && e.data.state !== undefined) renderSeal(e.data);
+    if (e.data.type === 'status' && e.data.state === undefined) askSeal();
+    if (e.data.type === 'tamper') loadFeed();
+  });
+  const askSeal = () => navigator.serviceWorker.ready.then(r => (navigator.serviceWorker.controller || r.active).postMessage({ type: 'status' }));
+  askSeal(); setInterval(askSeal, 20000);
+  navigator.serviceWorker.addEventListener('controllerchange', askSeal);
+} else { $('#s-state').textContent = 'unsupported here'; $('#sealstatus').textContent = '// this browser has no service workers, so it cannot check the seal.'; }
+
+$('#ttest').onclick = async () => {
+  const out = $('#tout');
+  if (!navigator.serviceWorker?.controller) { out.textContent = '// the verifier is still starting. reload once, then try again.'; return; }
+  out.textContent = '> loading /tamper-test/wallet-widget.js …';
+  // Load it in a hidden frame so only the frame gets the block screen, not this page.
+  const f = document.createElement('iframe'); f.style.cssText = 'width:100%;height:340px;border:1px solid var(--line);margin-top:8px;background:#17171a';
+  f.src = '/tamper-test/?t=' + Date.now();
+  out.innerHTML = '<span class="dim">$</span> entropynet tamper-test\n[*]   target   /tamper-test/wallet-widget.js\n[arm ] server   swapped in a fake "drainer" (harmless)\n[>]   fetch    frame requests the widget…';
+  out.after(f); f.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  $('#ttest').disabled = true; setTimeout(() => { $('#ttest').disabled = false; loadFeed(); }, 2500);
+  setTimeout(() => { try { const w = f.contentWindow.__entropynetWidget; out.innerHTML += w && /FAKE/.test(w) ? '\n<span class="mk-bad">[fire]</span>  ran      the fake script ran. seal NOT active.' : w ? '\n<span class="mk-warn">[warn]</span>  served   the sealed widget, no swap seen' : '\n[fire]  hash     sha256 ≠ sealed hash\n<span class="mk-ok">[OK]</span>    blocked  never ran · reported to the tamper feed'; } catch { out.innerHTML += '\n<span class="mk-ok">[OK]</span>    blocked  see the block screen below'; } }, 1800);
+};
+
+async function loadFeed() {
+  try {
+    const j = await (await fetch('/api/tamper')).json();
+    $('#tcount').textContent = j.items.length ? `(${j.items.length} reports)` : '';
+    $('#tfeed').innerHTML = j.items.length ? j.items.slice(0, 15).map(t =>
+      `${ago(t.received * 1000).padStart(8)}  ${t.test ? '[test]' : '[ALERT]'} ${esc(t.kind)} ${esc(t.path)}  want ${short(t.expected, 8)} got ${short(t.got, 8)}  <a href="/api/tamper/${t.id}" target="_blank">evidence</a>`).join('\n')
+      : '// no tamper reports. press the tamper test to make one.';
+  } catch { $('#tfeed').textContent = '// feed unavailable'; }
+}
+
+$('#sdir').onchange = async (e) => {
+  const fl = [...e.target.files]; if (!fl.length) return;
+  const out = $('#sout'); out.textContent = `hashing ${fl.length} files…`;
+  const hx = (b) => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+  const files = {};
+  for (const f of fl) { const p = '/' + f.webkitRelativePath.split('/').slice(1).join('/'); if (p.split('/').some(s => s.startsWith('.'))) continue; files[p] = hx(await crypto.subtle.digest('SHA-256', await f.arrayBuffer())); }
+  const lines = Object.entries(files).sort(([a], [b]) => (a < b ? -1 : 1)).map(([p, h]) => `${p} ${h}\n`).join('');
+  const root = hx(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(lines)));
+  out.textContent = `files root  ${root}\nfiles       ${Object.keys(files).length}\n\n` + Object.entries(files).slice(0, 40).map(([p, h]) => `${h.slice(0, 16)}…  ${p}`).join('\n') + (Object.keys(files).length > 40 ? '\n…' : '') +
+    `\n\nnext: run the same on your build machine and sign it.\nnpx entropynet seal ./dist  →  root should equal ${root.slice(0, 16)}…`;
+};

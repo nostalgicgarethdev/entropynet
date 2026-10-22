@@ -1,6 +1,6 @@
 {
  "buildCommand": "",
- "outputDirectory": "public",
+ "outputDirectory": "site",
  "rewrites": [
   {
    "source": "/api/round/:n",
@@ -9,6 +9,14 @@
   {
    "source": "/api/launch/:id",
    "destination": "/api/launch?id=:id"
+  },
+  {
+   "source": "/api/tamper/:id",
+   "destination": "/api/tamper?id=:id"
+  },
+  {
+   "source": "/api/seal/:id",
+   "destination": "/api/seal?id=:id"
   }
  ],
  "headers": [
@@ -22,6 +30,28 @@
     {
      "key": "Referrer-Policy",
      "value": "strict-origin-when-cross-origin"
+    }
+   ]
+  },
+  {
+   "source": "/sw.js",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "no-cache"
+    },
+    {
+     "key": "Service-Worker-Allowed",
+     "value": "/"
+    }
+   ]
+  },
+  {
+   "source": "/seal/(.*)",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "no-cache"
     }
    ]
   }

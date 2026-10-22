@@ -39,3 +39,17 @@ Rounds are produced on demand when the beacon is read, and are stored once and n
 - `offset = sha256(randomness + "|launch|" + id) mod window_seconds`, `launch_at = window_start + offset`.
 - Raffle round: the first published round at or after `round_at(launch_at)`.
 - `winner = signups[sha256(randomness + "|raffle|" + id) mod entrants]`.
+
+## Seal (entropynet-seal/v1)
+```
+files      = { "/path": sha256(bytes) }        (all files except /seal/release.json)
+files_root = sha256( for each path sorted: path + " " + hash + "\n" )
+id         = sha256( spec \n files_root \n round \n randomness \n created \n prev )
+signature  = ed25519( "entropynet-seal/v1:" + id )   by a key in seal.policy.json
+memo       = "entropynet-seal/v1 release=<id> files=<root> round=<n> uri=<uri>"
+```
+- Valid release: root and id recompute, and at least `threshold` distinct policy keys signed.
+- Update: accepted only if valid and `created` is newer than the pinned release. Older → `rollback` report.
+- Beacon chaining: once `/api/seal` accepts a release, each later round's message gets `|seal:<id>` appended (before signing).
+- Verifier: checks every same-origin GET except `/api/*`, `/sw.js`, `/seal/release.json`. Unknown documents/scripts/styles/workers are blocked.
+- Tamper evidence: JSON signed with a per-browser ECDSA P-256 key (P1363 signature, raw public key), `POST /api/tamper`. Proves integrity of the report, not the identity of the sender.

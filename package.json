@@ -1,1 +1,21 @@
-{"name":"entropynet","private":true,"type":"module","engines":{"node":"24.x"},"dependencies":{"@pump-fun/pump-sdk":"^4.1.0","@solana/web3.js":"^1.99.0","@vercel/blob":"^1.1.1","bn.js":"^5.2.5"}}
+{
+ "name": "entropynet",
+ "private": true,
+ "type": "module",
+ "engines": {
+  "node": "24.x"
+ },
+ "dependencies": {
+  "@pump-fun/pump-sdk": "^4.1.0",
+  "@solana/web3.js": "^1.99.0",
+  "@vercel/blob": "^1.1.1",
+  "bn.js": "^5.2.5"
+ },
+ "bin": {
+  "entropynet": "packages/cli/bin/entropynet.mjs"
+ },
+ "scripts": {
+  "release": "node scripts/release.mjs",
+  "test": "node scripts/check.mjs && node scripts/seal-test.mjs"
+ }
+}

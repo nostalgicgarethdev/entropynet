@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>entropynet · public randomness for fair launches</title>
-<meta name="description" content="A public randomness beacon on Solana. A new signed round every 3 seconds that anyone can check, and pump.fun launches timed by it so snipers can't pre-time them.">
+<title>entropynet · sealed front-ends: safe even when the server is hacked</title>
+<meta name="description" content="Sealed front-ends. Your team signs every release, and every visitor's browser blocks any file that doesn't match, even if the server, host or CI is hacked.">
 <meta property="og:title" content="entropynet">
-<meta property="og:description" content="Public randomness every 3 seconds. Launches timed by it, so nobody can snipe the start.">
+<meta property="og:description" content="A website that stays safe even when its server is hacked. Signed releases, checked in every browser.">
 <meta property="og:image" content="https://entropynet.space/og.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://entropynet.space/">
@@ -26,24 +26,105 @@
 <body>
 <div class="ca-strip" id="castrip"><span class="k">ca</span><code id="ca">not launched yet</code><button id="cacopy" disabled>copy</button></div>
 <header class="top">
-  <a class="brand" href="#beacon">entropy<b>net</b></a>
+  <a class="brand" href="#seal">entropy<b>net</b></a>
   <nav class="tabs" id="tabs">
-    <a href="#beacon" data-tab="beacon">[1] beacon</a>
-    <a href="#launches" data-tab="launches">[2] launches</a>
-    <a href="#verify" data-tab="verify">[3] verify</a>
-    <a href="#api" data-tab="api">[4] api</a>
-    <a href="#faq" data-tab="faq">[5] faq</a>
+    <a href="#seal" data-tab="seal">[1] seal</a>
+    <a href="#beacon" data-tab="beacon">[2] beacon</a>
+    <a href="#launches" data-tab="launches">[3] launches</a>
+    <a href="#verify" data-tab="verify">[4] verify</a>
+    <a href="#api" data-tab="api">[5] api</a>
+    <a href="#faq" data-tab="faq">[6] faq</a>
   </nav>
   <a class="xlink" href="https://x.com/entropynet_" target="_blank" rel="noopener" aria-label="entropynet on X">[x]</a>
   <span class="clock" id="clock">round ……</span>
 </header>
 
 <main>
-<!-- ============ BEACON ============ -->
-<section class="tab" id="tab-beacon">
+<!-- ============ SEAL ============ -->
+<section class="tab" id="tab-seal">
   <div class="hero">
+<pre class="orn" aria-hidden="true">--------------------------------------
+<span class="st">☆</span> Sign Everything                    <span class="st">☆</span>
+<span class="st">☆</span>             Trust No Server        <span class="st">☆</span>
+--------------------------------------
+<span class="dim">EST. OCT 21 2026 · sealed front-ends</span></pre>
     <pre class="wordmark" id="wordmark" aria-label="entropynet"></pre>
-    <p class="lede">Public randomness, every <span class="hl">3 seconds</span>. Anyone can check it. Nobody can predict it.<br>We use it to time real pump.fun launches, so nobody can pre-time the start.</p>
+    <pre class="prompt"><span class="dim">visitor@entropynet.space:~</span> <span class="hl">[sealed]</span>
+<span class="dim">$</span> entropynet verify --this-tab <span class="cur">█</span></pre>
+    <p class="lede">A website that stays safe <span class="hl">even when its server is hacked.</span><br>Your team signs every release. Every visitor's browser checks every file against that signature and refuses anything else, before it runs.</p>
+    <div class="hero-meta"><span>this site is sealed · <b id="s-state">checking…</b></span><span>release <b id="s-rel">…</b></span><span>signers <b id="s-sig">…</b></span></div>
+  </div>
+
+  <div class="panel why">
+    <div class="ptitle"><span>┌─ why now</span><span class="dim">oct 21, 2026</span></div>
+<pre class="code">Same day, the web stack cracked open.
+
+<b>hosts got popped.</b>   Railway: an attacker may have read and decrypted customer
+                    env vars. Roll everything; deploys paused. (<a href="https://blog.railway.com/p/security-disclosure-wednesday-october-21st" target="_blank" rel="noopener">disclosure</a>)
+<b>runtimes got patched.</b> Node.js security releases, incl. a Brotli decoder bug that
+                    permits RCE, CVE-2026-111497. (<a href="https://nodejs.org/en/blog/vulnerability/october-2026-security-releases" target="_blank" rel="noopener">nodejs.org</a>)
+<b>php research flooded in.</b> CVE-2026-109618 / 109619. Agencies said patch now (<a href="https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching" target="_blank" rel="noopener">CISA</a>).
+                    Independent research (J4ck3LSyN, "PHP up 2026") pushes back on
+                    the early RCE claims: a medium memory-safety bug, not code exec.
+
+Small teams get burned in the gap between the leak and the patch.
+Your dapp front end is still one swapped script away from a drainer.
+Ledger Connect Kit (2023) and BadgerDAO (2021) went exactly that way.
+
+We made that not matter. A sealed release can't be silently swapped while
+servers scramble to patch. Its signing keys never live on the server, the
+host or its env vars. And the verifier is free, not a subscription perk.</pre>
+  </div>
+
+  <div class="two">
+    <div class="panel">
+      <div class="ptitle"><span>┌─ this site, sealed</span><span class="dim" id="s-badge">…</span></div>
+      <pre class="rc" id="sealstatus">// asking the verifier in your browser…</pre>
+    </div>
+    <div class="panel">
+      <div class="ptitle"><span>┌─ tamper test</span></div>
+      <p class="hint" style="padding-top:12px">The server has really swapped one sealed script, <code>/tamper-test/wallet-widget.js</code>, for a fake "drainer". The fake is harmless: no wallet code, it only writes a line to the console. Press the button and watch your browser refuse it.</p>
+      <button class="btn" id="ttest" style="margin:0 14px 14px">load the swapped script →</button>
+      <pre class="rc" id="tout" style="padding-top:0"></pre>
+    </div>
+  </div>
+
+  <h2 class="sh">// how it works</h2>
+  <div class="grid3">
+    <div class="box"><div class="bt">[1] seal</div><p><code>npx entropynet seal ./dist</code> hashes every file into a manifest with one root hash, stamped with a beacon round.</p></div>
+    <div class="box"><div class="bt">[2] sign + anchor</div><p>2 of 3 team keys sign it, on their own machines. The release is written to Solana in a memo, so it's public and can't be backdated.</p></div>
+    <div class="box"><div class="bt">[3] verify in the browser</div><p>A small verifier in every visitor's browser checks each page, script and style against the signed manifest, and blocks anything that doesn't match.</p></div>
+  </div>
+
+  <h2 class="sh">// threat model</h2>
+  <div class="panel"><pre class="code">attacker has                         sealed site
+───────────────────────────────────  ─────────────────────────────────────────
+your web server (php, node, nginx)   swapped files are blocked in the browser
+your host account or its env vars    can't sign: seal keys are never stored there
+a stolen deploy / CI token           can deploy, can't sign, so visitors block it
+1 of your 3 signing keys             still short of the 2-of-3 threshold
+your DNS on a visitor's first visit  <b>not covered</b>: first visit is trust-on-first-use
+2 of your 3 signing keys             <b>not covered</b>: that's the threshold</pre></div>
+
+  <h2 class="sh">// tamper feed <span class="dim" id="tcount"></span></h2>
+  <div class="panel"><pre class="stream" id="tfeed">// loading</pre></div>
+
+  <h2 class="sh">// seal your own site</h2>
+  <div class="panel">
+    <div class="vrow"><label class="file">choose your build folder<input type="file" id="sdir" webkitdirectory multiple></label><span class="dim">hashed in your browser, nothing is uploaded</span></div>
+    <pre class="vout" id="sout">npx entropynet seal ./dist --uri https://your.site
+npx entropynet sign ./dist --key ~/keys/alice.json     <i>// on alice's machine</i>
+npx entropynet sign ./dist --key ~/keys/bob.json       <i>// on bob's machine</i>
+npx entropynet anchor ./dist --payer devnet-payer.json <i>// solana devnet in v1</i>
+npx entropynet verify ./dist</pre>
+  </div>
+</section>
+
+<!-- ============ BEACON ============ -->
+<section class="tab" id="tab-beacon" hidden>
+  <div class="hero small">
+    <h1 class="h1">// the beacon</h1>
+    <p class="lede">Public randomness, every <span class="hl">3 seconds</span>. Anyone can check it. Nobody can predict it. It timestamps every sealed release and times fair launches.</p>
     <div class="hero-meta" id="herometa">
       <span>round <b id="h-round">…</b></span><span>next in <b id="h-next">…</b></span><span>slot <b id="h-slot">…</b></span><span>nodes <b>5/5</b></span>
     </div>
@@ -140,7 +221,16 @@ beacon key    = <span id="apikey">…</span>
 <!-- ============ FAQ ============ -->
 <section class="tab" id="tab-faq" hidden>
   <div class="faq" id="faqlist">
-    <details open><summary>What is a randomness beacon?</summary><p>A public service that puts out a fresh random number on a fixed schedule. Everyone sees the same number at the same time, and anyone can check it wasn't rigged.</p></details>
+    <details open><summary>What is a sealed front-end?</summary><p>A website whose files are signed by its team. Your browser checks every page, script and style against that signed list and refuses anything else. If someone hacks the server and swaps in a drainer, your browser won't run it.</p></details>
+    <details><summary>Why does this matter now?</summary><p>On Oct 21, 2026 the web stack got hit on several fronts at once. Railway said an attacker may have accessed and decrypted customer environment variables, and paused deployments (<a href="https://blog.railway.com/p/security-disclosure-wednesday-october-21st" target="_blank" rel="noopener">disclosure</a>). Node.js shipped security releases, including CVE-2026-111497, a Brotli decoder bug that permits remote code execution (<a href="https://nodejs.org/en/blog/vulnerability/october-2026-security-releases" target="_blank" rel="noopener">nodejs.org</a>). And PHP's CVE-2026-109618 / 109619 drew urgent patch advisories (<a href="https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching" target="_blank" rel="noopener">CISA</a>), while independent research (J4ck3LSyN, "PHP up 2026") argues the real issue is a medium-severity memory-safety bug, not code execution. Whatever the final verdict, servers spend days in the gap between leak and patch. A sealed front end can't be silently swapped during that gap. entropynet doesn't patch PHP or Node; patch them.</p></details>
+    <details><summary>What if my host or CI gets hacked?</summary><p>That's the case this is built for. Releases are signed by 2 of 3 team keys that live on the team's own machines. They are never stored on the hosting platform, in its env vars, or in CI. Someone with a stolen deploy token can push files, but they can't sign them, so every visitor's browser blocks them. The release script refuses to run where VERCEL, CI or RAILWAY_ENVIRONMENT is set.</p></details>
+    <details><summary>What does the beacon have to do with it?</summary><p>Each release is stamped with a beacon round, and the newest release is chained into every round after it. That fixes when it was sealed. It's also on-theme: Node's CVE-2026-106074 made randomUUID() and randomInt() repeat the same values in every process started from a snapshot. A public beacon exists so repeated or rigged randomness gets caught.</p></details>
+    <details><summary>Is my first visit protected?</summary><p>Not fully. On your very first visit the verifier isn't installed yet, so you trust whatever the server sends that one time (trust on first use). From then on it's pinned: the signer keys are built into the verifier, and any new release needs 2 of 3 of them. A browser extension that ships the keys ahead of time is the next level.</p></details>
+    <details><summary>What if they replace the verifier itself?</summary><p>Browsers re-check the service worker file now and then, and the verifier checks /sw.js against the sealed release every minute and raises the alarm if it changed. It can't stop its own replacement, which is another reason the extension is on the roadmap.</p></details>
+    <details><summary>What happens on a mismatch?</summary><p>The file is stopped before it runs, the tab shows a block screen, and your browser posts signed evidence to the public tamper feed. Reports from the tamper test are labelled [test].</p></details>
+    <details><summary>Is the tamper test safe?</summary><p>Yes. The swapped file is a fake "drainer" with no wallet code. It only sets a line of text. It's there to show the block working.</p></details>
+    <details><summary>Where is the release recorded?</summary><p>In a Solana memo transaction with the release id, root hash, beacon round and manifest address. v1 uses devnet. Mainnet is a config switch and is off.</p></details>
+    <details><summary>What is a randomness beacon?</summary><p>A public service that puts out a fresh random number on a fixed schedule. Everyone sees the same number at the same time, and anyone can check it wasn't rigged.</p></details>
     <details><summary>Why can't the beacon cheat?</summary><p>Each node locks its secret in with a hash one round early, so it can't swap it after seeing the others. A finalized Solana block hash goes in too, which nobody controls. Every round is signed and chained to the last, so history can't be quietly rewritten.</p></details>
     <details><summary>Who runs the nodes?</summary><p>Right now, five nodes run by entropynet. The commit-reveal and the Solana block hash are there so you don't have to take our word for it. Outside node operators are next.</p></details>
     <details><summary>How does a fair launch work?</summary><p>You set a window, say "opens in 5 minutes, lasts 10", connect your wallet and add an image. During the window, every beacon round (every 3 seconds) has a chance to fire. The first round that fires is the launch moment. Nobody can know it in advance, including you. Your page then asks your wallet to sign the pump.fun create, and you have 2 minutes to approve. The receipt shows which round fired and how many seconds after it the coin landed.</p></details>
@@ -155,7 +245,7 @@ beacon key    = <span id="apikey">…</span>
 </main>
 
 <footer class="foot">
-  <span>entropynet · public randomness on solana</span>
+  <span>entropynet · sealed front-ends on solana</span>
   <span>ca <code id="ca2">not launched yet</code></span>
   <span><a href="https://github.com/nostalgicgarethdev/entropynet" rel="noopener">github</a> · <a href="https://x.com/entropynet_" target="_blank" rel="noopener">x @entropynet_</a></span>
   <span class="dim">beacon key <code id="fkey">…</code></span>

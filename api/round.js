@@ -1,4 +1,4 @@
-import { latest, getRound, roundAt, PERIOD, GENESIS, NODES, publicKeyHex } from './_lib/beacon.js';
+import { latest, getRound, roundAt, PERIOD, GENESIS, NODES, publicKeyHex } from '../packages/beacon/beacon.js';
 export default async function handler(req, res) {
   try {
     const q = req.query.n;

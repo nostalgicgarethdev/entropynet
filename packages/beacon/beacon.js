@@ -26,7 +26,8 @@ export const publicKeyHex = () => keys().pub;
 
 // canonical message the beacon signs (verifier rebuilds this exactly)
 export function message(r) {
-  return [DOMAIN, r.round, r.prev_round, r.prev_randomness, r.mix, r.solana.slot, r.solana.blockhash, r.time].join('|');
+  const base = [DOMAIN, r.round, r.prev_round, r.prev_randomness, r.mix, r.solana.slot, r.solana.blockhash, r.time].join('|');
+  return r.seal ? base + '|seal:' + r.seal : base;   // newest sealed release, chained into the round (seal spec v1)
 }
 export function mixOf(reveals) { return sha(Buffer.from(reveals.map(x => x.reveal).join(''), 'hex')); }
 
@@ -69,6 +70,14 @@ async function solanaAnchor() {
   throw new Error('no finalized block');
 }
 
+// newest sealed release id (set by /api/seal after it checks the team signatures)
+let _seal = { at: 0, id: null };
+async function latestSeal() {
+  if (Date.now() - _seal.at < 30000) return _seal.id;
+  try { const j = await getJSON('seals/latest.json'); _seal = { at: Date.now(), id: j && /^[0-9a-f]{64}$/.test(j.id) ? j.id : null }; } catch { _seal.at = Date.now(); }
+  return _seal.id;
+}
+
 // ---------- production (lazy, idempotent) ----------
 let head = null; // warm-instance cache
 async function findHead(target) {
@@ -95,6 +104,7 @@ export async function produce(r0, anchor) {
     mix: mixOf(reveals),
     solana: anchor,
   };
+  const seal = await latestSeal(); if (seal) r.seal = seal;
   r.randomness = sha(Buffer.from(message(r)));
   r.signature = crypto.sign(null, Buffer.from(message(r) + '|' + r.randomness), keys().priv).toString('hex');
   r.public_key = keys().pub;

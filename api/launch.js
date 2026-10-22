@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { latest, getRound, getJSON, putJSON, roundAt } from './_lib/beacon.js';
-import * as P from './_lib/pump.js';
+import { latest, getRound, getJSON, putJSON, roundAt } from '../packages/beacon/beacon.js';
+import * as P from '../packages/launch/pump.js';
 
 const LIVE = process.env.ENTROPY_LAUNCHES_LIVE === 'true';
 const SIGN_WINDOW = 120;         // seconds the creator has to land the create after the beacon fires
