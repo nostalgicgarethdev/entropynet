@@ -148,47 +148,124 @@ $('#vsol').onclick = async () => {
 
 /* ---------- launches ---------- */
 const fmtT = (s) => new Date(s * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+let LIVE = false;
+const post = async (body) => (await fetch('/api/launch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })).json();
+
+/* wallet: the creator's own browser wallet signs and pays. entropynet never holds a key. */
+const provider = () => window.phantom?.solana || window.solflare || window.backpack?.solana || window.solana || null;
+let wallet = null;
+async function connectWallet() {
+  const p = provider(); if (!p) throw new Error('No Solana wallet found in this browser. Install Phantom, Solflare or Backpack.');
+  const r = await p.connect(); wallet = (r?.publicKey || p.publicKey).toString();
+  document.querySelectorAll('.wallet-btn').forEach(b => b.textContent = wallet.slice(0, 4) + '…' + wallet.slice(-4));
+  return wallet;
+}
+document.addEventListener('click', (e) => { if (e.target.closest('.wallet-btn')) { e.preventDefault(); connectWallet().catch(x => alert(x.message)); } });
+let _w3; const web3 = async () => (_w3 ||= await import('https://esm.sh/@solana/web3.js@1.98.0'));
+const b64ToBytes = (b) => Uint8Array.from(atob(b), c => c.charCodeAt(0));
+const bytesToB64 = (u) => { let s = ''; u.forEach(x => s += String.fromCharCode(x)); return btoa(s); };
+async function walletSign(b64tx, extraSigner) {
+  const { VersionedTransaction } = await web3();
+  const tx = VersionedTransaction.deserialize(b64ToBytes(b64tx));
+  const signed = await provider().signTransaction(tx);   // the wallet shows the transaction; the user approves
+  if (extraSigner) signed.sign([extraSigner]);
+  return bytesToB64(signed.serialize());
+}
+
 async function loadBoard(openId) {
   try {
     const j = await (await fetch('/api/launch', { cache: 'no-store' })).json();
-    $('#mode').innerHTML = j.live ? 'mode: <b>live</b> · launches go to pump.fun' : 'mode: <b>paper</b> · timing, raffles and receipts are real · no coin is created on-chain yet';
+    LIVE = j.live; document.body.classList.toggle('live', LIVE);
+    $('#mode').innerHTML = LIVE ? 'mode: <b>live</b> · launches create real pump.fun coins · signed and paid by the creator\'s own wallet' : 'mode: <b>paper</b> · timing, raffles and receipts are real · no coin is created on-chain yet';
     $('#lcount').textContent = j.items.length + ' launches';
-    $('#board').innerHTML = j.items.length ? j.items.map(L => `<a class="li" href="#launches/${L.id}"><b>$${L.ticker}</b><span>${L.name}<br><i>${L.timing ? 'launch second ' + fmtT(L.timing.launch_at) : 'window opens ' + fmtT(L.window_start)}</i></span><span class="tag ${L.status}">${L.status}</span></a>`).join('') : '<p class="hint">// no launches yet. schedule the first one.</p>';
+    $('#board').innerHTML = j.items.length ? j.items.map(L => `<a class="li" href="#launches/${L.id}"><b>$${L.ticker}</b><span>${L.name}<br><i>${L.status === 'live' ? 'live on pump.fun' : L.fire ? 'beacon fired ' + fmtT(L.fire.time) : L.timing ? 'launch second ' + fmtT(L.timing.launch_at) : 'window opens ' + fmtT(L.window_start)}</i></span><span class="tag ${L.status}">${L.status}</span></a>`).join('') : '<p class="hint">// no launches yet. schedule the first one.</p>';
   } catch { $('#board').innerHTML = '<p class="hint">// board unavailable, retrying</p>'; }
   if (openId) openReceipt(openId);
 }
-let rcTimer;
+
+let rcTimer, launching = false; const attempted = new Set();
+async function creatorLaunch(L, out) {
+  if (launching) return; launching = true;
+  try {
+    const { Keypair } = await web3();
+    const mint = Keypair.generate();   // fresh mint key, made and kept in this browser only
+    out.textContent = '// beacon fired. building your create transaction…';
+    const b = await post({ action: 'build', id: L.id, creator: wallet, mint: mint.publicKey.toBase58() });
+    if (b.error) throw new Error(b.error);
+    out.textContent = '// approve the launch in your wallet now (2-minute window)';
+    const signed = await walletSign(b.tx, mint);
+    out.textContent = '// sending…';
+    const r = await post({ action: 'send', id: L.id, tx: signed });
+    if (r.error) throw new Error(r.error);
+    out.textContent = '// sent ' + r.sig.slice(0, 12) + '… waiting for confirmation';
+  } catch (e) { out.textContent = '// ' + (/reject|cancel/i.test(e.message) ? 'You cancelled in your wallet. Nothing was sent. You can try again until the window closes.' : e.message); }
+  launching = false;
+}
+async function winnerBuy(L, out) {
+  try {
+    const sol = Number($('#wbsol').value) || 0.1;
+    const b = await post({ action: 'winner-buy', id: L.id, wallet, sol }); if (b.error) throw new Error(b.error);
+    const signed = await walletSign(b.tx);
+    const r = await post({ action: 'winner-send', id: L.id, tx: signed }); if (r.error) throw new Error(r.error);
+    out.textContent = '// buy sent ' + r.sig.slice(0, 12) + '…';
+  } catch (e) { out.textContent = '// ' + e.message; }
+}
+
 async function openReceipt(id) {
   clearTimeout(rcTimer);
   const L = await (await fetch('/api/launch/' + id, { cache: 'no-store' })).json(); if (L.error) return;
   const box = $('#receipt'); box.hidden = false;
   const now = Date.now() / 1000;
-  const lines = [
-    `"launch": "$${L.ticker} · ${L.name}",`, `"id": "${L.id}",`, `"status": "${L.status}",`,
-    `"window": "${fmtT(L.window_start)} → ${fmtT(L.window_start + L.window_seconds)}",`,
-    `"decided_by_round": ${L.timing ? L.timing.round : `"first round at or after #${L.decision_round_target}"`},`,
-  ];
-  if (L.timing) lines.push(`"randomness": "${L.timing.randomness}",`, `"offset": ${L.timing.offset_seconds}, <i>// ${L.timing.formula}</i>`, `"launch_second": "${fmtT(L.timing.launch_at)}",`);
+  const lines = [`"launch": "$${L.ticker} · ${L.name}",`, `"id": "${L.id}",`, `"status": "${L.status}",`, `"mode": "${L.live ? 'live' : 'paper'}",`,
+    `"window": "${fmtT(L.window_start)} → ${fmtT(L.window_start + L.window_seconds)}",`];
+  if (L.live) {
+    lines.push(`"creator": "${L.creator}",`, `"rounds": "#${L.first_round} → #${L.last_round}",`);
+    if (L.fire) lines.push(`"fired_by_round": ${L.fire.round}, <i>// ${L.fire.rule}</i>`, `"fired_at": "${fmtT(L.fire.time)}",`, `"randomness": "${L.fire.randomness}",`);
+    if (L.onchain) lines.push(`"mint": "${L.onchain.mint}",`, `"tx": "${L.onchain.sig}",`, `"landed": "${L.onchain.seconds_after_fire}s after the beacon fired",`);
+    if (L.dev_buy_sol) lines.push(`"creator_first_buy_sol": ${L.dev_buy_sol},`);
+  } else {
+    lines.push(`"decided_by_round": ${L.timing ? L.timing.round : `"first round at or after #${L.decision_round_target}"`},`);
+    if (L.timing) lines.push(`"randomness": "${L.timing.randomness}",`, `"offset": ${L.timing.offset_seconds}, <i>// ${L.timing.formula}</i>`, `"launch_second": "${fmtT(L.timing.launch_at)}",`);
+  }
   if (L.raffle) lines.push(`"raffle_entrants": ${L.signups.length},`);
   if (L.raffle_result) lines.push(`"raffle_round": ${L.raffle_result.round},`, `"winner": "${L.raffle_result.winner}", <i>// ${L.raffle_result.formula}</i>`);
   if (L.note) lines.push(`<i>// ${L.note}</i>`);
-  let signup = '';
-  if (L.raffle && now < L.window_start) signup = `<div class="vrow"><label>wallet <input id="sw" placeholder="your solana address" style="width:30ch"></label><button class="btn" id="sbtn">join raffle</button><span class="err" id="serr"></span></div>`;
-  box.innerHTML = `<div class="ptitle"><span>┌─ entropy receipt</span><span class="dim">${now < L.window_start ? 'window opens in ' + Math.ceil(L.window_start - now) + 's' : ''}</span></div><pre class="rc">{\n  ${lines.join('\n  ')}\n}</pre>${signup}` +
-    (L.timing ? `<div class="pfoot"><span>re-run: sha256(randomness + "|launch|${L.id}") mod ${L.window_seconds}</span><a href="#verify/${L.timing.round}">verify round ${L.timing.round} →</a></div>` : '');
-  const sb = $('#sbtn'); if (sb) sb.onclick = async () => {
-    const r = await (await fetch('/api/launch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'signup', id, wallet: $('#sw').value.trim() }) })).json();
-    if (r.error) $('#serr').textContent = r.error; else openReceipt(id);
-  };
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  if (L.status !== 'launched-paper') rcTimer = setTimeout(() => { if (location.hash === '#launches/' + id && !document.activeElement?.matches('#sw')) openReceipt(id); }, 5000);
+  let extra = '';
+  if (L.raffle && now < L.window_start) extra += `<div class="vrow"><label>wallet <input id="sw" placeholder="your solana address" style="width:30ch"></label><button class="btn" id="sbtn">join raffle</button><span class="err" id="serr"></span></div>`;
+  if (L.live && ['scheduled', 'armed', 'fired'].includes(L.status)) extra += `<div class="vrow"><span class="dim">${L.status === 'fired' ? 'creator: approve in your wallet' : 'creator: keep this page open. your wallet pops up within ~3s of the beacon firing; you then have 2 minutes to approve'}</span><button class="btn ghost wallet-btn">${wallet ? wallet.slice(0, 4) + '…' + wallet.slice(-4) : 'connect wallet'}</button></div><pre class="rc" id="lout"></pre>`;
+  if (L.live && L.status === 'live' && L.raffle_result) extra += `<div class="vrow"><span class="dim">raffle winner: buy first from here (your wallet signs and pays)</span><label>sol <input id="wbsol" value="0.1" style="width:6ch"></label><button class="btn ghost wallet-btn">${wallet ? wallet.slice(0, 4) + '…' : 'connect wallet'}</button><button class="btn" id="wbbtn">buy</button></div><pre class="rc" id="wbout"></pre>`;
+  const keepOut = $('#lout')?.textContent;
+  box.innerHTML = `<div class="ptitle"><span>┌─ entropy receipt</span><span class="dim">${now < L.window_start ? 'window opens in ' + Math.ceil(L.window_start - now) + 's' : ''}</span></div><pre class="rc">{\n  ${lines.join('\n  ')}\n}</pre>${extra}` +
+    (L.onchain ? `<div class="pfoot"><a href="${L.onchain.pump}" target="_blank" rel="noopener">open on pump.fun →</a><a href="#verify/${L.fire.round}">verify round ${L.fire.round} →</a></div>` : L.fire ? `<div class="pfoot"><span>fired by round ${L.fire.round}</span><a href="#verify/${L.fire.round}">verify →</a></div>` : L.timing ? `<div class="pfoot"><span>re-run: sha256(randomness + "|launch|${L.id}") mod ${L.window_seconds}</span><a href="#verify/${L.timing.round}">verify round ${L.timing.round} →</a></div>` : '');
+  if (keepOut && $('#lout')) $('#lout').textContent = keepOut;
+  const sb = $('#sbtn'); if (sb) sb.onclick = async () => { const r = await post({ action: 'signup', id, wallet: $('#sw').value.trim() }); if (r.error) $('#serr').textContent = r.error; else openReceipt(id); };
+  const wb = $('#wbbtn'); if (wb) wb.onclick = async () => { if (!wallet) await connectWallet(); winnerBuy(L, $('#wbout')); };
+  if (L.live && L.status === 'fired' && wallet === L.creator && !L.sig) {
+    if (!attempted.has(L.id)) { attempted.add(L.id); creatorLaunch(L, $('#lout')); }
+    else if (!launching && $('#lout') && !$('#lretry')) { const b = document.createElement('button'); b.className = 'btn'; b.id = 'lretry'; b.textContent = 'sign the launch again'; b.style.margin = '0 14px 14px'; b.onclick = () => creatorLaunch(L, $('#lout')); $('#lout').after(b); }
+  }
+  const done = ['launched-paper', 'live', 'missed'].includes(L.status);
+  if (!done) rcTimer = setTimeout(() => { if (location.hash === '#launches/' + id && !document.activeElement?.matches('#sw,#wbsol')) openReceipt(id); }, L.status === 'armed' || L.status === 'fired' ? 2500 : 5000);
+}
+async function fileToDataUrl(f) {
+  if (!f) return '';
+  if (f.size > 1_000_000) throw new Error('Image must be under 1 MB.');
+  return new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
 }
 $('#lform').onsubmit = async (e) => {
   e.preventDefault(); $('#lerr').textContent = '';
-  const f = new FormData(e.target); const b = Object.fromEntries(f); b.raffle = f.get('raffle') === 'on';
-  const r = await (await fetch('/api/launch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) })).json();
-  if (r.error) { $('#lerr').textContent = r.error; return; }
-  e.target.reset(); location.hash = '#launches/' + r.id;
+  try {
+    const f = new FormData(e.target); const b = Object.fromEntries(f); b.raffle = f.get('raffle') === 'on'; delete b.image;
+    if (LIVE) {
+      b.creator = wallet || await connectWallet();
+      b.image = await fileToDataUrl(f.get('image')?.size ? f.get('image') : null);
+      if (!b.image) throw new Error('Add an image for your coin.');
+      $('#lerr').textContent = 'uploading metadata to ipfs…';
+    }
+    const r = await post(b);
+    if (r.error) throw new Error(r.error);
+    e.target.reset(); $('#lerr').textContent = ''; location.hash = '#launches/' + r.id;
+  } catch (x) { $('#lerr').textContent = x.message; }
 };
 
 /* ---------- api tab ---------- */
@@ -197,3 +274,4 @@ async function loadApi() { try { const r = await (await fetch('/api/round/latest
 showTab();
 const vh = location.hash.match(/^#verify\/(\d+)/); if (vh) runVerify(vh[1]);
 addEventListener('hashchange', () => { const m = location.hash.match(/^#verify\/(\d+)/); if (m) runVerify(m[1]); });
+document.querySelector('.file input')?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.nextElementSibling.textContent = f ? f.name.slice(0, 24) : 'choose file'; });

@@ -11,7 +11,14 @@ Live: https://entropynet.space · X: [@entropynet_](https://x.com/entropynet_)
 - **Verifier.** The site re-checks any round in your browser: commits, mix, randomness, signature and chain.
 - **Fair launches.** The creator picks a window. The first round after the window opens picks the exact launch second. An optional first-buy raffle is drawn by the round at that second. Every launch gets a public entropy receipt.
 
-Launches run in paper mode (`ENTROPY_LAUNCHES_LIVE=false`). Nothing is sent on-chain.
+Live launches (`ENTROPY_LAUNCHES_LIVE=true`) create real pump.fun coins, signed and paid by the creator's own browser wallet:
+1. The creator connects a wallet, sets a window and an image. Metadata goes to IPFS through pump.fun.
+2. During the window each beacon round fires with probability 1/M. The first round that fires is the launch moment.
+3. The server builds an unsigned `create_v2` (plus an optional first buy) and simulates it. The mint key is made in the browser, the wallet signs, the browser adds the mint signature, and the server relays the signed bytes.
+4. The server confirms on chain that the creator's wallet created that mint and stamps the receipt. The creator has 2 minutes after the round fires.
+5. The raffle winner (drawn by the same round) gets a buy button that builds a buy for their own wallet. It's a head start, not an on-chain lock.
+
+The server never holds a wallet key and never signs a transaction. Set `ENTROPY_LAUNCHES_LIVE=false` for paper mode.
 
 ## API
 | | |

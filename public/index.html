@@ -43,7 +43,7 @@
 <section class="tab" id="tab-beacon">
   <div class="hero">
     <pre class="wordmark" id="wordmark" aria-label="entropynet"></pre>
-    <p class="lede">Public randomness, every <span class="hl">3 seconds</span>. Anyone can check it. Nobody can predict it.<br>We use it to time pump.fun launches, so snipers can't pre-time the start.</p>
+    <p class="lede">Public randomness, every <span class="hl">3 seconds</span>. Anyone can check it. Nobody can predict it.<br>We use it to time real pump.fun launches, so nobody can pre-time the start.</p>
     <div class="hero-meta" id="herometa">
       <span>round <b id="h-round">…</b></span><span>next in <b id="h-next">…</b></span><span>slot <b id="h-slot">…</b></span><span>nodes <b>5/5</b></span>
     </div>
@@ -67,15 +67,15 @@
 
   <h2 class="sh">// why launches need it</h2>
   <div class="grid3">
-    <div class="box"><div class="bt">no pre-timed snipes</div><p>The creator picks a window, like "sometime in the next 10 minutes". A beacon round picks the exact second. Bots can't know it in advance.</p></div>
-    <div class="box"><div class="bt">fair first buy</div><p>Optional raffle: people sign up before the window opens, and a later round draws who gets the first buy. The creator can't pick a friend.</p></div>
+    <div class="box"><div class="bt">no pre-timed snipes</div><p>The creator picks a window, like "sometime in the next 10 minutes". A beacon round picks the moment. Nobody knows it in advance, not even the creator.</p></div>
+    <div class="box"><div class="bt">fair first buy</div><p>Optional raffle: people sign up before the window opens, and the round that fires draws a winner who gets a head-start buy button. The creator can't pick a friend.</p></div>
     <div class="box"><div class="bt">entropy receipt</div><p>Every launch gets a public receipt naming the rounds that decided it, with the math, so anyone can re-run it.</p></div>
   </div>
 </section>
 
 <!-- ============ LAUNCHES ============ -->
 <section class="tab" id="tab-launches" hidden>
-  <div class="mode" id="mode">mode: <b>paper</b> · launches are simulated · nothing is sent on-chain</div>
+  <div class="mode" id="mode">mode: …</div>
   <div class="two">
     <form class="panel json" id="lform" autocomplete="off">
       <div class="ptitle"><span>┌─ new fair launch</span></div>
@@ -83,12 +83,16 @@
   "<b>name</b>":   <input name="name" maxlength="32" placeholder="Your coin" required>,
   "<b>ticker</b>": <input name="ticker" maxlength="10" placeholder="TICKER" required>,
   "<b>about</b>":  <input name="description" maxlength="200" placeholder="optional">,
-  "<b>creator</b>":<input name="creator" maxlength="44" placeholder="your wallet (optional)">,
+  "<b>image</b>":  <label class="file"><input type="file" name="image" accept="image/png,image/jpeg,image/gif,image/webp"><span>choose file</span></label>, <i class="liveonly">// required · under 1 MB</i>
+  "<b>x</b>":      <input name="twitter" maxlength="200" placeholder="optional">,
+  "<b>website</b>":<input name="website" maxlength="200" placeholder="optional">,
+  "<b>creator</b>":<button type="button" class="btn ghost wallet-btn">connect wallet</button>, <i>// signs and pays</i>
+  "<b>first_buy</b>": <input name="dev_buy_sol" inputmode="decimal" placeholder="0" style="width:6ch">, <i>// SOL, optional, in the same tx</i>
   "<b>window_opens_in</b>": <select name="start_in_minutes"><option>2</option><option selected>5</option><option>15</option><option>60</option></select>, <i>// minutes</i>
   "<b>window_length</b>":   <select name="window_minutes"><option>3</option><option selected>10</option><option>30</option><option>60</option></select>, <i>// minutes</i>
   "<b>first_buy_raffle</b>": <label class="tog"><input type="checkbox" name="raffle" checked><span></span></label>
 }</pre>
-      <p class="hint">Signups close when the window opens. Then the first beacon round after that point picks the launch second inside the window. The round at that second draws the raffle.</p>
+      <p class="hint">You pay about 0.02 SOL in rent and fees from your own wallet, plus any first buy. entropynet takes nothing and never holds a key.<br>Signups close when the window opens. During the window, every beacon round has a chance to fire. The first one that fires is the launch moment, and nobody knows it in advance, including you. Keep this page open: your wallet pops up within about 3 seconds and you have 2 minutes to approve. The same round draws the raffle.</p>
       <button class="btn" type="submit">schedule launch →</button><span class="err" id="lerr"></span>
     </form>
     <div class="panel">
@@ -139,10 +143,12 @@ beacon key    = <span id="apikey">…</span>
     <details open><summary>What is a randomness beacon?</summary><p>A public service that puts out a fresh random number on a fixed schedule. Everyone sees the same number at the same time, and anyone can check it wasn't rigged.</p></details>
     <details><summary>Why can't the beacon cheat?</summary><p>Each node locks its secret in with a hash one round early, so it can't swap it after seeing the others. A finalized Solana block hash goes in too, which nobody controls. Every round is signed and chained to the last, so history can't be quietly rewritten.</p></details>
     <details><summary>Who runs the nodes?</summary><p>Right now, five nodes run by entropynet. The commit-reveal and the Solana block hash are there so you don't have to take our word for it. Outside node operators are next.</p></details>
-    <details><summary>How does a fair launch work?</summary><p>You set a window, say "opens in 5 minutes, lasts 10". When it opens, the first beacon round after that point picks the exact second inside the window. Nobody knows that second beforehand, including you.</p></details>
-    <details><summary>What's the first-buy raffle?</summary><p>People drop their wallet before the window opens. At the launch second, that round's randomness draws one winner, who gets the first buy. The receipt shows the round and the math.</p></details>
-    <details><summary>Are launches real yet?</summary><p>Not yet. Launches run in paper mode: the timing, the raffle and the receipts are real, but no coin is created on-chain. Live pump.fun launching is switched off until it's ready.</p></details>
-    <details><summary>Does it cost anything?</summary><p>Using the beacon and the API is free. Live launches will cost the usual pump.fun rent and fees from your wallet.</p></details>
+    <details><summary>How does a fair launch work?</summary><p>You set a window, say "opens in 5 minutes, lasts 10", connect your wallet and add an image. During the window, every beacon round (every 3 seconds) has a chance to fire. The first round that fires is the launch moment. Nobody can know it in advance, including you. Your page then asks your wallet to sign the pump.fun create, and you have 2 minutes to approve. The receipt shows which round fired and how many seconds after it the coin landed.</p></details>
+    <details><summary>What's the first-buy raffle?</summary><p>People drop their wallet before the window opens. The round that fires also draws one winner. When the coin is live, the winner gets a buy button on the receipt that builds a buy for their own wallet to sign and pay. It's a head start, not a lock: pump.fun is open to everyone, so we can't stop others buying at the same time.</p></details>
+    <details><summary>Are launches real?</summary><p>Yes. A live launch creates a real coin on pump.fun. Your own wallet signs and pays for it in your browser; entropynet never holds a key or your SOL. Your coin's metadata and image go to IPFS through pump.fun.</p></details>
+    <details><summary>Who signs and pays?</summary><p>You do. The server only builds the unsigned transaction and checks it in a simulation. The coin's mint key is made in your browser and never leaves it. Your wallet shows the transaction before you approve.</p></details>
+    <details><summary>What if I miss the moment?</summary><p>If the create doesn't land within 2 minutes of the beacon firing, the launch is marked missed. You can still launch on pump.fun yourself, but it won't carry an entropynet receipt.</p></details>
+    <details><summary>Does it cost anything?</summary><p>The beacon and the API are free. A launch costs the usual pump.fun rent and network fees, about 0.02 SOL, from your wallet, plus any first buy you add. entropynet takes no fee.</p></details>
     <details><summary>Can I use the beacon for my own thing?</summary><p>Yes. Raffles, giveaways, game seeds, picking winners. Read /api/round/latest and point people to the verifier.</p></details>
   </div>
 </section>

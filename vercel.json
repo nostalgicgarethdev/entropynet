@@ -1,4 +1,34 @@
-{ "buildCommand": "", "outputDirectory": "public",
-  "rewrites": [ {"source": "/api/round/:n", "destination": "/api/round?n=:n"},
-                {"source": "/api/launch/:id", "destination": "/api/launch?id=:id"} ],
-  "headers": [ {"source": "/(.*)", "headers": [ {"key":"X-Content-Type-Options","value":"nosniff"}, {"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"} ]} ] }
+{
+ "buildCommand": "",
+ "outputDirectory": "public",
+ "rewrites": [
+  {
+   "source": "/api/round/:n",
+   "destination": "/api/round?n=:n"
+  },
+  {
+   "source": "/api/launch/:id",
+   "destination": "/api/launch?id=:id"
+  }
+ ],
+ "headers": [
+  {
+   "source": "/(.*)",
+   "headers": [
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    }
+   ]
+  }
+ ],
+ "functions": {
+  "api/*.js": {
+   "maxDuration": 30
+  }
+ }
+}
