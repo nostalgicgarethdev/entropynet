@@ -5,7 +5,7 @@ const hex = (b) => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0
 const unhex = (h) => new Uint8Array(h.match(/../g).map(x => parseInt(x, 16)));
 const sha = async (data) => hex(await crypto.subtle.digest('SHA-256', typeof data === 'string' ? enc.encode(data) : data));
 const PERIOD = 3, GENESIS = 1792612800;
-const WM = ["\u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2588    \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588  \u2588\u2588    \u2588\u2588 \u2588\u2588\u2588    \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588", "\u2588\u2588      \u2588\u2588\u2588\u2588   \u2588\u2588    \u2588\u2588    \u2588\u2588   \u2588\u2588 \u2588\u2588    \u2588\u2588 \u2588\u2588   \u2588\u2588  \u2588\u2588  \u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588 \u2588\u2588         \u2588\u2588", "\u2588\u2588\u2588\u2588\u2588   \u2588\u2588 \u2588\u2588  \u2588\u2588    \u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588  \u2588\u2588    \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588   \u2588\u2588 \u2588\u2588  \u2588\u2588 \u2588\u2588\u2588\u2588\u2588      \u2588\u2588", "\u2588\u2588      \u2588\u2588  \u2588\u2588 \u2588\u2588    \u2588\u2588    \u2588\u2588   \u2588\u2588 \u2588\u2588    \u2588\u2588 \u2588\u2588         \u2588\u2588    \u2588\u2588  \u2588\u2588 \u2588\u2588 \u2588\u2588         \u2588\u2588", "\u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588   \u2588\u2588\u2588\u2588    \u2588\u2588    \u2588\u2588   \u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588  \u2588\u2588         \u2588\u2588    \u2588\u2588   \u2588\u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588"];
+const WM = ["███████╗███╗   ██╗████████╗██████╗  ██████╗ ██████╗ ██╗   ██╗███╗   ██╗███████╗████████╗", "██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗╚██╗ ██╔╝████╗  ██║██╔════╝╚══██╔══╝", "█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║   ██║██████╔╝ ╚████╔╝ ██╔██╗ ██║█████╗     ██║   ", "██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║   ██║██╔═══╝   ╚██╔╝  ██║╚██╗██║██╔══╝     ██║   ", "███████╗██║ ╚████║   ██║   ██║  ██║╚██████╔╝██║        ██║   ██║ ╚████║███████╗   ██║   ", "╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   ╚═╝  ╚═══╝╚══════╝   ╚═╝   "];
 
 /* ---------- CA strip ---------- */
 if (CFG.ca) { $('#ca').textContent = CFG.ca; $('#ca2').textContent = CFG.ca; const b = $('#cacopy'); b.disabled = false;
@@ -26,16 +26,35 @@ addEventListener('hashchange', () => { showTab(); scrollTo(0, 0); });
 /* ---------- wordmark ---------- */
 function drawWordmark(seed) {
   let k = 0;
-  $('#wordmark').innerHTML = WM.map(line => [...line].map(ch => {
-    if (ch !== '█') return ch;
-    const v = parseInt(seed[(k++) % 64], 16);
-    return v === 0 ? '<span class="o">█</span>' : '█';
-  }).join('')).join('\n');
+  const W = WM[0].length, P = 4, N = W + P * 2;
+  const bar = (l, r, fill = '━') => { const mid = N - l.length - r.length; return l + fill.repeat(Math.max(0, mid)) + r; };
+  const pad = (s, n) => s + ' '.repeat(Math.max(0, n - s.length));
+  const sp = (c, t) => `<span class="${c}">${t}</span>`;
+  const body = WM.map(line => [...line].map(ch => {
+    if (ch === '█') { const v = parseInt(seed[(k++) % 64], 16); return v === 0 ? sp('a', '█') : '█'; }
+    return ch === ' ' ? ch : sp('s', ch);
+  }).join(''));
+  const tag = '· s i g n   e v e r y t h i n g ·   t r u s t   n o   s e r v e r ·';
+  const lt = Math.floor((N - tag.length) / 2);
+  const head = '━━ ' + sp('k', 'entropynet/v1') + ' ';
+  const headR = ' ' + sp('hl', '◆') + ' ' + sp('k', 'sealed front-ends') + ' ━━';
+  const headLen = 3 + 13 + 1, headRLen = 3 + 17 + 3;
+  const footL = '━━ ' + sp('k', 'est. oct 21 2026') + ' ', footR = ' ' + sp('k', '2-of-3 · solana mainnet') + ' ━━';
+  const footLen = 3 + 16 + 1, footRLen = 1 + 23 + 3;
+  const blank = '┃' + ' '.repeat(N) + '┃';
+  $('#wordmark').innerHTML = [
+    sp('f', '┏' + head) + sp('f', '━'.repeat(N - headLen - headRLen)) + sp('f', headR + '┓'),
+    sp('f', blank),
+    ...body.map(b => sp('f', '┃') + ' '.repeat(P) + b + ' '.repeat(P) + sp('f', '┃')),
+    sp('f', blank),
+    sp('f', '┃') + ' '.repeat(lt) + sp('k', tag) + ' '.repeat(N - lt - tag.length) + sp('f', '┃'),
+    sp('f', '┗' + footL) + sp('f', '━'.repeat(N - footLen - footRLen)) + sp('f', footR + '┛'),
+  ].join('\n');
 }
 drawWordmark('1'.repeat(64));
 
 /* ---------- entropy field ---------- */
-const RAMP = ' .·:-=+*#%';
+const RAMP = ' ·∙:÷+×*#▓';
 let cols = 0, rows = 13, cells = [];
 function sizeField() {
   const w = $('#field').clientWidth - 28; const cw = parseFloat(getComputedStyle($('#field')).fontSize) * 0.6;
@@ -371,7 +390,15 @@ async function runCheck(u) {
     const head = r.sealed ? '<span class="mk-ok">[*] SEALED</span>' : '<span class="mk-bad">[!] NOT SEALED</span>';
     const tx = r.anchor ? `\nrecord     <a href="https://explorer.solana.com/tx/${esc(r.anchor.tx)}${r.anchor.cluster === 'devnet' ? '?cluster=devnet' : ''}" target="_blank" rel="noopener">${esc(r.anchor.cluster)} tx ${esc(r.anchor.tx.slice(0, 16))}…</a>` : '';
     $('#mkbox').hidden = !!r.sealed;
-    out.innerHTML = `$ entropynet check ${esc(r.origin || r.input || u)}\n${rows}\n\n┌──────── receipt ────────\n│ ${head}\n│ ${esc(r.reason || '')}${r.release ? '\n│ release ' + esc(r.release.slice(0, 32)) + '…' : ''}\n│ checked ${esc(r.checked_at || '')}${r.cached ? ' (cached)' : ''}\n└─────────────────────────${tx}`;
+    const RW = 46, rl = (t, plain) => '│ ' + t + ' '.repeat(Math.max(1, RW - 1 - plain.length)) + '│';
+    const rsn = String(r.reason || '').slice(0, RW - 3), rel = r.release ? 'release ' + r.release.slice(0, 24) + '…' : '';
+    const chk = 'checked ' + String(r.checked_at || '').replace('T', ' ').slice(0, 19) + (r.cached ? ' (cached)' : '');
+    const hp = r.sealed ? '[*] SEALED' : '[!] NOT SEALED';
+    out.innerHTML = `<span class="dim">$</span> entropynet check ${esc(r.origin || r.input || u)}\n${rows}\n\n` + [
+      '╭─ receipt ' + '─'.repeat(RW - 10) + '╮',
+      rl(head, hp), rl(esc(rsn), rsn), ...(rel ? [rl('<span class="dim">' + esc(rel) + '</span>', rel)] : []),
+      rl('<span class="dim">' + esc(chk) + '</span>', chk),
+      '╰' + '─'.repeat(RW - 13) + ' entropynet ─╯'].join('\n') + tx;
   } catch { out.innerHTML = '<span class="mk-bad">[!]</span> check failed, try again'; }
 }
 $('#ckform').addEventListener('submit', e => { e.preventDefault(); const u = $('#ckurl').value.trim(); location.hash = '#check/' + encodeURIComponent(u); });
