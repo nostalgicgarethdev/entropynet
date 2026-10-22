@@ -1,11 +1,11 @@
 {
  "spec": "entropynet-seal/v1",
- "created": 1792631621,
+ "created": 1792632078,
  "uri": "https://entropynet.space/seal/release.json",
- "prev": "e5138c165f6c791c70652b84e51a1476232fc8f0f327eaed00674949d9ec3c23",
+ "prev": "e4c7ecf1b4cad84aab3543e8f6466671812d06fef8b98eed48c705b380998a5a",
  "beacon": {
-  "round": 6273,
-  "randomness": "d94df0b9b4a22f47cd75d63105a900d3d5e305979c2368053b6e2cf9a5ff6b26",
+  "round": 6426,
+  "randomness": "cd705f1bdff1c7a3bfc60ebb6dfb6d0252e1a54cc0933f1f62aab17b23fdbbbe",
   "url": "https://entropynet.space"
  },
  "files_root": "e7adf1a22b6efcb6001513bc7f6939b2caaa5fc1f14aad443c25f338d83d6ae0",
@@ -29,19 +29,19 @@
  "signatures": [
   {
    "signer": "J5nybktmcYMC1mgviFTPVBsDEBqDQ48of1597ouQF6BC",
-   "sig": "0e3086ba7fe1f5382d8f9c69ca4d32e6acbb1ca3a706471bdc315d9a057f33541274eb4dbb3dd99834174ab210a7cc13f197999859f077fb22886a37d36a590d"
+   "sig": "7bd8d8d44cb4be9a12547cf259a62d908dc81fff8727fbe43805ac2fa19936c772e3ae9e737dddd9b434d83860c6a3cd967f4eeea751d8d926e8a50c4d62a802"
   },
   {
    "signer": "FjmNawh7JvwBCbjzLZaVPVBeVnHKLTNyeUAoDDe7cGza",
-   "sig": "8da04c2933730f6e2b61a7986f70d879f7a2d0fa6b369db89c9cf26ef384de1fbed41d9be66d25d0e7d19de78355e5debee0a7f4c92f73b1b538f1bf7e6adf0c"
+   "sig": "c376485673e1d888338efc146d4c0286e6b5d068907ae865387b01cd90b1d986fa6d96596d994c7598d07cf5f6ec18e3c9c40fc60a68018176d0751af35fd106"
   }
  ],
  "anchor": {
-  "cluster": "devnet",
+  "cluster": "mainnet-beta",
   "program": "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo",
-  "tx": "5qDsCeBLxC5meXaLWSKYhzhhH5hmwfm7i1zrzyYCJX6QqkwijjNJCAmqnty82ok24Yft1kQoUNndjnqKRgytKvg4",
-  "payer": "K1EBtioxvmqLJDeZ5cg7YGuXfpC7LURXRmGCGPGj8yY",
-  "memo": "entropynet-seal/v1 release=e4c7ecf1b4cad84aab3543e8f6466671812d06fef8b98eed48c705b380998a5a files=e7adf1a22b6efcb6001513bc7f6939b2caaa5fc1f14aad443c25f338d83d6ae0 round=6273 uri=https://entropynet.space/seal/release.json"
+  "tx": "3gyUGdUxBtgrEScxQ6bbCUZ4gDnHuUAvQxewwfHervmZULJByegKjehssEVAkSSe4qzqvN4FRsLq2Pze6B9TC3LK",
+  "payer": "3KNNm6PRU9gx7EMebCHdnS23sgDCXZ2AJpPdw3eQ6wBJ",
+  "memo": "entropynet-seal/v1 release=6a2f907fcb8e9713ebfab7d3aaf03ce283f4c50e87df46c5c178a1163a1de93d files=e7adf1a22b6efcb6001513bc7f6939b2caaa5fc1f14aad443c25f338d83d6ae0 round=6426 uri=https://entropynet.space/seal/release.json"
  },
- "id": "e4c7ecf1b4cad84aab3543e8f6466671812d06fef8b98eed48c705b380998a5a"
+ "id": "6a2f907fcb8e9713ebfab7d3aaf03ce283f4c50e87df46c5c178a1163a1de93d"
 }
