@@ -63,7 +63,7 @@ async function refresh(force) {
 async function anchorCheck() {
   const cur = await loadCurrent(); if (!cur) return;
   const a = cur.release.anchor; if (!a) { cur.anchor_status = 'not anchored yet'; return saveCurrent(cur); }
-  const rpc = a.cluster === 'devnet' ? 'https://api.devnet.solana.com' : 'https://api.mainnet-beta.solana.com';
+  const rpc = a.cluster === 'devnet' ? 'https://api.devnet.solana.com' : self.location.origin + '/api/relay?cluster=mainnet';   // public mainnet RPC rejects many browser origins
   try {
     const j = await (await fetch(rpc, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getTransaction', params: [a.tx, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0, commitment: 'confirmed' }] }) })).json();
     const found = j.result && !j.result.meta.err && JSON.stringify(j.result.transaction).includes(`release=${cur.release.id}`);

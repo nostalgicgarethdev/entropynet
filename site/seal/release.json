@@ -1,14 +1,14 @@
 {
  "spec": "entropynet-seal/v1",
- "created": 1792632078,
+ "created": 1792632364,
  "uri": "https://entropynet.space/seal/release.json",
- "prev": "e4c7ecf1b4cad84aab3543e8f6466671812d06fef8b98eed48c705b380998a5a",
+ "prev": "6a2f907fcb8e9713ebfab7d3aaf03ce283f4c50e87df46c5c178a1163a1de93d",
  "beacon": {
-  "round": 6426,
-  "randomness": "cd705f1bdff1c7a3bfc60ebb6dfb6d0252e1a54cc0933f1f62aab17b23fdbbbe",
+  "round": 6521,
+  "randomness": "b5274a9f2705ed1187a37decbe0c857a52144bc41d8dacfa2e44870120f8764e",
   "url": "https://entropynet.space"
  },
- "files_root": "e7adf1a22b6efcb6001513bc7f6939b2caaa5fc1f14aad443c25f338d83d6ae0",
+ "files_root": "77ecf4f203e355843301ec1f66a45e4c6958ed909376d7cb4b373fba279fcba9",
  "files": {
   "/app.js": "03c9e46047e840ed6c1a492fb6d06c02a9237d119d0af909e71fd55d15ac57bd",
   "/apple-touch-icon.png": "29513bb8c218c328f953e84282b2b47e17af89cfeac7939577dcafdbc2427fb3",
@@ -22,26 +22,26 @@
   "/s/mini.js": "d7411198854ebeca7348978f7081564af5f8e4a36f41541faea54dbcb9b54954",
   "/seal/policy.json": "b9714b760fd308b6b0e8ac4197dd9474b8b354093f163c3c11f975c530a25ca0",
   "/styles.css": "fa4f756108f0801293fbbe838741a828f8db3c7f406151da70e5cbed5ef75b32",
-  "/sw.js": "83ce7dd87d9f156897bc876d149d171ffa71efbb77e536869476fa0dd0546ad6",
+  "/sw.js": "3b52cdfbe6cc4e59e7c960d70798bc6ac7ec95130493caf4ba2f39f0f86bf657",
   "/tamper-test/index.html": "a70bf3be737a8f4676e042bc84b7bbc288fb42642f01c53d73dc5406b70ea90a",
   "/tamper-test/wallet-widget.js": "cfa9535f5aaeae73918ff275517db4631057f2597e1112621e21e936a28678dd"
  },
  "signatures": [
   {
    "signer": "J5nybktmcYMC1mgviFTPVBsDEBqDQ48of1597ouQF6BC",
-   "sig": "7bd8d8d44cb4be9a12547cf259a62d908dc81fff8727fbe43805ac2fa19936c772e3ae9e737dddd9b434d83860c6a3cd967f4eeea751d8d926e8a50c4d62a802"
+   "sig": "76692f1f97dbf506ab80fa872536e20d63261a736540b60d5e3cb3fad43bd94948a25cc03d5b626bf168008cd1a21c3b876309be48b4cf377ebce09d9e79570e"
   },
   {
    "signer": "FjmNawh7JvwBCbjzLZaVPVBeVnHKLTNyeUAoDDe7cGza",
-   "sig": "c376485673e1d888338efc146d4c0286e6b5d068907ae865387b01cd90b1d986fa6d96596d994c7598d07cf5f6ec18e3c9c40fc60a68018176d0751af35fd106"
+   "sig": "bd5d30ce5177857e8853741655e68d2553eafe6ce8a197aa3717002f36e75a62acd365fa908ef2b6f9e835c94f13c300fc37f829840f2d42b54bfe634ece460d"
   }
  ],
  "anchor": {
   "cluster": "mainnet-beta",
   "program": "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo",
-  "tx": "3gyUGdUxBtgrEScxQ6bbCUZ4gDnHuUAvQxewwfHervmZULJByegKjehssEVAkSSe4qzqvN4FRsLq2Pze6B9TC3LK",
+  "tx": "2c1s25WaZKiymhPqEHAwE6APu3hwmSnsNdpHdmk4P64TFgHoXmtaThfkrtvnJKuudkqnfAdSd8YG5YpA6BG14y2K",
   "payer": "3KNNm6PRU9gx7EMebCHdnS23sgDCXZ2AJpPdw3eQ6wBJ",
-  "memo": "entropynet-seal/v1 release=6a2f907fcb8e9713ebfab7d3aaf03ce283f4c50e87df46c5c178a1163a1de93d files=e7adf1a22b6efcb6001513bc7f6939b2caaa5fc1f14aad443c25f338d83d6ae0 round=6426 uri=https://entropynet.space/seal/release.json"
+  "memo": "entropynet-seal/v1 release=e3ee4dd7e88af7aabc2f72e3cfa75419773d8e7ff5bae8852d4ade20097e4323 files=77ecf4f203e355843301ec1f66a45e4c6958ed909376d7cb4b373fba279fcba9 round=6521 uri=https://entropynet.space/seal/release.json"
  },
- "id": "6a2f907fcb8e9713ebfab7d3aaf03ce283f4c50e87df46c5c178a1163a1de93d"
+ "id": "e3ee4dd7e88af7aabc2f72e3cfa75419773d8e7ff5bae8852d4ade20097e4323"
 }
