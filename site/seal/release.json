@@ -1,27 +1,27 @@
 {
  "spec": "entropynet-seal/v1",
- "created": 1792771551,
- "uri": "https://entropynet.space/seal/release.json",
- "prev": "20b8a3585a5ff10918accf8d23f3121fa47c5a83a13e827da0ccc25d6e38ede2",
+ "created": 1792772220,
+ "uri": "https://phpnet.xyz/seal/release.json",
+ "prev": "51bead56a8d83b5793b3e6805bb0e23e9fa37cd4cde86e9af6ccc8530a8f227c",
  "beacon": {
-  "round": 52916,
-  "randomness": "db9888b5e07cafd450624804632dd93b21de1b9d89d69719d1a14937873a29a1",
+  "round": 53140,
+  "randomness": "5d6ba236498e4162babd648c73adde2580978e139b554c9f14093ed07823d6f3",
   "url": "https://entropynet.space"
  },
- "files_root": "0f85f7eb5ab7a94c0eb0f949cd1696ab94ddf2b1d095728093026008ebb0b6b0",
+ "files_root": "b6d44b5da6e7c387197da06f5b8c140d8a409b324880bc8d8fda2ea53928f81c",
  "files": {
-  "/app.js": "8aa4b34f8adae852645ac7b6de31c3a0adc5db7bc1e8ce118fd7ac3f25f6515d",
+  "/app.js": "b0c612e7c596b612699a5260af9cbfdb937a403f10c3665b4b234f7cd0448dfd",
   "/apple-touch-icon.png": "29e7a0ecf3468a26d46840ad6f8e176de67e24c0dc7beb313b3106d2a85799d3",
   "/config.js": "e178b0264616109e6dadffc2401598806d890464caa3c092bb2414373e8afd4a",
   "/favicon-32.png": "dd647517e70ec2794ac43734cdc9b370a1ccad9f6427f70e6c9487b87028709e",
   "/favicon.ico": "6bb3dc9a7f88419f05a9f1840ded3638e13bf8da7b89ee30fe2cfb37f369e123",
-  "/index.html": "a9e6aace9bfb1f1c688736246ca2d2c1e153d1bea18a13d2c6f6440ab79cadf3",
-  "/logo.png": "66e9a9086002368f2e3ed5b1044e12937f8204c6fdba73e5672efd366a020757",
-  "/og.png": "ccfaf02425f1d82734c658bc79c91407afec117f0e57f761319bdf72f2a2de5a",
-  "/s/index.html": "38bebe1753e61e15b936283441ea86da8bd6bd0bbd960335d6ae4507f10fb83e",
-  "/s/mini.js": "d7411198854ebeca7348978f7081564af5f8e4a36f41541faea54dbcb9b54954",
+  "/index.html": "ca30591ab7ca59a6f595bc0aa8618f224140f6a00d757f17ce9757f4b343f6d1",
+  "/logo.png": "3cbb1676633876a1a4c28ee41a9d6f91ad8747c24387fd4062c83301a725e2fb",
+  "/og.png": "f7e80770a8b95fc516ae2c13a5ddd9b8a14b228892585fd1b857988d83df2984",
+  "/s/index.html": "aa758b5b04f164e8b5489147b02698eb5d3371a6f00bb20c7afb0f13d4cbb8b2",
+  "/s/mini.js": "f3f017ddcf1fcf3b0f11826dd0a02614fb98652e9e590a51f5c63bc3f7c20aff",
   "/seal/policy.json": "b9714b760fd308b6b0e8ac4197dd9474b8b354093f163c3c11f975c530a25ca0",
-  "/styles.css": "10ca5b9124dee6819738b1a8107096676d646a231081b8c3de63d1a3413bed48",
+  "/styles.css": "d17d23d4eaf167cd17a9a7e3d39fe1d8adb875276547475e204398589a2a3f38",
   "/sw.js": "3b52cdfbe6cc4e59e7c960d70798bc6ac7ec95130493caf4ba2f39f0f86bf657",
   "/tamper-test/index.html": "a70bf3be737a8f4676e042bc84b7bbc288fb42642f01c53d73dc5406b70ea90a",
   "/tamper-test/wallet-widget.js": "cfa9535f5aaeae73918ff275517db4631057f2597e1112621e21e936a28678dd"
@@ -29,19 +29,19 @@
  "signatures": [
   {
    "signer": "J5nybktmcYMC1mgviFTPVBsDEBqDQ48of1597ouQF6BC",
-   "sig": "ed51aab9e210bab34d40074d46273caa5db023526c7ed95d1cbb47c48fa4fe73c4b7815b40b1e14ca85aea5104543776400465af4a95fc8d4dbf194a624e2407"
+   "sig": "198eff2a38366c7f76e281604384592dfe0affd15564b95c7a77d80776098cddf6997f339d3833256d54cfc1819d6b7734e12e94b5131e53dc957f21bfbac800"
   },
   {
    "signer": "FjmNawh7JvwBCbjzLZaVPVBeVnHKLTNyeUAoDDe7cGza",
-   "sig": "45ab076500e1fba1b6017f0ea6bb6057a2b76c80b4f7d0a1103cd477741edd6f732c0c1680db689e27e700d0ddeb54455dfe5b312bf432f5a3936cb9af941d0e"
+   "sig": "3255d2c1ad2d433cdeb77725a4067de951de440ea77c5bc3eb64d63a7b2ef4b0a6175b1cd234bdbc0ab2e7d102b487f3a66bb5e1342260763dcaee593ba2ef0d"
   }
  ],
  "anchor": {
-  "cluster": "mainnet",
+  "cluster": "mainnet-beta",
   "program": "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo",
-  "tx": "3BuqtptaxCRuBWFwRQ2J5EdSx616eR91qa52wmQZ2Vihz3VAGeXurE7wHnBWJmqyF8ChKEXZ9THR8wro69yrnxD1",
+  "tx": "28Y4waQQQvcqNQLL9EFaishKriKGA48UPKcc13bq6W2tdFdcnAqU5PJeh9Woo8DqnkAY1kpFAUGJZBKGXyvRgciX",
   "payer": "3KNNm6PRU9gx7EMebCHdnS23sgDCXZ2AJpPdw3eQ6wBJ",
-  "memo": "entropynet-seal/v1 release=51bead56a8d83b5793b3e6805bb0e23e9fa37cd4cde86e9af6ccc8530a8f227c files=0f85f7eb5ab7a94c0eb0f949cd1696ab94ddf2b1d095728093026008ebb0b6b0 round=52916 uri=https://entropynet.space/seal/release.json"
+  "memo": "entropynet-seal/v1 release=f2b63d6234ea90c806e1ce0c0926ae5822035f9beb75ce18bacbe2c916a4f253 files=b6d44b5da6e7c387197da06f5b8c140d8a409b324880bc8d8fda2ea53928f81c round=53140 uri=https://phpnet.xyz/seal/release.json"
  },
- "id": "51bead56a8d83b5793b3e6805bb0e23e9fa37cd4cde86e9af6ccc8530a8f227c"
+ "id": "f2b63d6234ea90c806e1ce0c0926ae5822035f9beb75ce18bacbe2c916a4f253"
 }

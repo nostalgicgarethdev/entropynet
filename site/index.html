@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>entropynet · sealed front-ends: safe even when the server is hacked</title>
+<title>PHPNET · sealed front-ends: safe even when the server is hacked</title>
 <meta name="description" content="Sealed front-ends. Your team signs every release, and every visitor's browser blocks any file that doesn't match, even if the server, host or CI is hacked.">
-<meta property="og:title" content="entropynet">
+<meta property="og:title" content="PHPNET">
 <meta property="og:description" content="A website that stays safe even when its server is hacked. Signed releases, checked in every browser.">
-<meta property="og:image" content="https://entropynet.space/og.png">
+<meta property="og:image" content="https://phpnet.xyz/og.png">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://entropynet.space/">
-<link rel="canonical" href="https://entropynet.space/">
+<meta property="og:url" content="https://phpnet.xyz/">
+<link rel="canonical" href="https://phpnet.xyz/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@entropynet_">
-<meta name="twitter:image" content="https://entropynet.space/og.png">
+<meta name="twitter:image" content="https://phpnet.xyz/og.png">
 <meta name="theme-color" content="#f2f0e9">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -26,7 +26,7 @@
 <body>
 <div class="ca-strip" id="castrip"><span class="k">ca</span><code id="ca">not launched yet</code><button id="cacopy" disabled>copy</button></div>
 <header class="top">
-  <a class="brand" href="#seal">entropy<b>net</b></a>
+  <a class="brand" href="#seal">php<b>net</b></a>
   <nav class="tabs" id="tabs">
     <a href="#seal" data-tab="seal">[1] seal</a>
     <a href="#check" data-tab="check">[2] check</a>
@@ -36,7 +36,7 @@
     <a href="#api" data-tab="api">[6] api</a>
     <a href="#faq" data-tab="faq">[7] faq</a>
   </nav>
-  <a class="xlink" href="https://x.com/entropynet_" target="_blank" rel="noopener" aria-label="entropynet on X">[x]</a>
+  <a class="xlink" href="https://x.com/entropynet_" target="_blank" rel="noopener" aria-label="PHPNET on X">[x]</a>
   <span class="clock" id="clock">round ……</span>
 </header>
 
@@ -45,9 +45,9 @@
 <section class="tab" id="tab-seal">
   <div class="hero">
 <pre class="orn" aria-hidden="true"><span class="dim">·──·</span> <span class="st">✦</span> research terminal <span class="dim">·</span> sealed releases <span class="dim">·</span> browser-verified <span class="st">✦</span> <span class="dim">·──·</span></pre>
-    <pre class="wordmark" id="wordmark" aria-label="entropynet"></pre>
-    <pre class="prompt"><span class="dim">visitor@entropynet.space:~</span> <span class="hl">[sealed]</span>
-<span class="dim">$</span> entropynet verify --this-tab <span class="cur">█</span></pre>
+    <pre class="wordmark" id="wordmark" aria-label="PHPNET"></pre>
+    <pre class="prompt"><span class="dim">visitor@phpnet.xyz:~</span> <span class="hl">[sealed]</span>
+<span class="dim">$</span> phpnet verify --this-tab <span class="cur">█</span></pre>
     <p class="lede">A website that stays safe <span class="hl">even when its server is hacked.</span><br>Your team signs every release. Every visitor's browser checks every file against that signature and refuses anything else, before it runs.</p>
     <div class="hero-meta"><span>this site is sealed · <b id="s-state">checking…</b></span><span>release <b id="s-rel">…</b></span><span>signers <b id="s-sig">…</b></span></div>
   </div>
@@ -170,7 +170,7 @@ npx entropynet verify ./dist</pre>
   "<b>window_length</b>":   <select name="window_minutes"><option>3</option><option selected>10</option><option>30</option><option>60</option></select>, <i>// minutes</i>
   "<b>first_buy_raffle</b>": <label class="tog"><input type="checkbox" name="raffle" checked><span></span></label>
 }</pre>
-      <p class="hint">You pay about 0.02 SOL in rent and fees from your own wallet, plus any first buy. entropynet takes nothing and never holds a key.<br>Signups close when the window opens. During the window, every beacon round has a chance to fire. The first one that fires is the launch moment, and nobody knows it in advance, including you. Keep this page open: your wallet pops up within about 3 seconds and you have 2 minutes to approve. The same round draws the raffle.</p>
+      <p class="hint">You pay about 0.02 SOL in rent and fees from your own wallet, plus any first buy. PHPNET takes nothing and never holds a key.<br>Signups close when the window opens. During the window, every beacon round has a chance to fire. The first one that fires is the launch moment, and nobody knows it in advance, including you. Keep this page open: your wallet pops up within about 3 seconds and you have 2 minutes to approve. The same round draws the raffle.</p>
       <button class="btn" type="submit">schedule launch →</button><span class="err" id="lerr"></span>
     </form>
     <div class="panel">
@@ -185,7 +185,7 @@ npx entropynet verify ./dist</pre>
 <section class="tab" id="tab-check" hidden>
   <div class="panel">
     <div class="ptitle"><span>┌─ check a site · is it sealed?</span></div>
-    <form class="vrow" id="ckform"><label>url <input id="ckurl" placeholder="https://entropynet.space" autocomplete="off" spellcheck="false"></label><button class="btn" id="ckgo">check</button><button type="button" class="btn ghost" id="ckdemo">try entropynet.space</button></form>
+    <form class="vrow" id="ckform"><label>url <input id="ckurl" placeholder="https://phpnet.xyz" autocomplete="off" spellcheck="false"></label><button class="btn" id="ckgo">check</button><button type="button" class="btn ghost" id="ckdemo">try entropynet.space</button></form>
     <pre class="vout" id="ckout">// paste a site. we fetch its seal manifest, signer policy and a few live files (plain GETs, nothing else)</pre>
   </div>
   <div class="panel" id="mkbox" hidden>
@@ -202,7 +202,7 @@ npx entropynet verify ./dist</pre>
       <label class="dim"><input type="checkbox" name="ok"> I'm the creator and this CA is mine</label>
       <button class="btn ghost wallet-btn" type="button">connect wallet</button><button class="btn">sign &amp; launch page</button>
     </form>
-    <pre class="vout" id="mkout">// your page lives at entropynet.space/s/&lt;slug&gt;. its code is our sealed 2-of-3 release + browser verifier; its content is signed by your wallet. 5 pages an hour per ip, slugs belong to the first wallet.</pre>
+    <pre class="vout" id="mkout">// your page lives at phpnet.xyz/s/&lt;slug&gt;. its code is our sealed 2-of-3 release + browser verifier; its content is signed by your wallet. 5 pages an hour per ip, slugs belong to the first wallet.</pre>
   </div>
   <p class="hint">SEALED means: a signed entropynet-seal/v1 manifest at /seal/release.json meets the 2-of-3 style threshold of the signer policy at /seal/policy.json, the release id is recorded on Solana, and the live index and main scripts hash to what was sealed. It is not a promise the site is "hack-proof" — it says the code you get is the code its team signed. NOT SEALED means missing seal, bad signatures, no on-chain record, a hash mismatch, or unreachable. No vulnerability scanning, no probing.</p>
 </section>
@@ -220,7 +220,7 @@ npx entropynet verify ./dist</pre>
 <!-- ============ API ============ -->
 <section class="tab" id="tab-api" hidden>
   <div class="panel"><pre class="code">
-<i>// base url: https://entropynet.space</i>
+<i>// base url: https://phpnet.xyz</i>
 <b>GET</b> /api/round/latest      <i>// newest round</i>
 <b>GET</b> /api/check?url=        <i>// is a site sealed? passive, cached 60s</i>
 <b>GET</b> /api/site?slug=        <i>// a sealed coin page (creator-signed)</i>
@@ -257,10 +257,10 @@ beacon key    = <span id="apikey">…</span>
     <details><summary>Where is the release recorded?</summary><p>In a Solana memo transaction with the release id, root hash, beacon round and manifest address. v1 uses devnet. Mainnet is a config switch and is off.</p></details>
     <details><summary>What is a randomness beacon?</summary><p>A public service that puts out a fresh random number on a fixed schedule. Everyone sees the same number at the same time, and anyone can check it wasn't rigged.</p></details>
     <details><summary>Why can't the beacon cheat?</summary><p>Each node locks its secret in with a hash one round early, so it can't swap it after seeing the others. A finalized Solana block hash goes in too, which nobody controls. Every round is signed and chained to the last, so history can't be quietly rewritten.</p></details>
-    <details><summary>Who runs the nodes?</summary><p>Right now, five nodes run by entropynet. The commit-reveal and the Solana block hash are there so you don't have to take our word for it. Outside node operators are next.</p></details>
+    <details><summary>Who runs the nodes?</summary><p>Right now, five nodes run by PHPNET. The commit-reveal and the Solana block hash are there so you don't have to take our word for it. Outside node operators are next.</p></details>
     <details><summary>How does a fair launch work?</summary><p>You set a window, say "opens in 5 minutes, lasts 10", connect your wallet and add an image. During the window, every beacon round (every 3 seconds) has a chance to fire. The first round that fires is the launch moment. Nobody can know it in advance, including you. Your page then asks your wallet to sign the pump.fun create, and you have 2 minutes to approve. The receipt shows which round fired and how many seconds after it the coin landed.</p></details>
     <details><summary>What's the first-buy raffle?</summary><p>People drop their wallet before the window opens. The round that fires also draws one winner. When the coin is live, the winner gets a buy button on the receipt that builds a buy for their own wallet to sign and pay. It's a head start, not a lock: pump.fun is open to everyone, so we can't stop others buying at the same time.</p></details>
-    <details><summary>Are launches real?</summary><p>Yes. A live launch creates a real coin on pump.fun. Your own wallet signs and pays for it in your browser; entropynet never holds a key or your SOL. Your coin's metadata and image go to IPFS through pump.fun.</p></details>
+    <details><summary>Are launches real?</summary><p>Yes. A live launch creates a real coin on pump.fun. Your own wallet signs and pays for it in your browser; PHPNET never holds a key or your SOL. Your coin's metadata and image go to IPFS through pump.fun.</p></details>
     <details><summary>Who signs and pays?</summary><p>You do. The server only builds the unsigned transaction and checks it in a simulation. The coin's mint key is made in your browser and never leaves it. Your wallet shows the transaction before you approve.</p></details>
     <details><summary>What if I miss the moment?</summary><p>If the create doesn't land within 2 minutes of the beacon firing, the launch is marked missed. You can still launch on pump.fun yourself, but it won't carry an entropynet receipt.</p></details>
     <details><summary>Does it cost anything?</summary><p>The beacon and the API are free. A launch costs the usual pump.fun rent and network fees, about 0.02 SOL, from your wallet, plus any first buy you add. entropynet takes no fee.</p></details>
@@ -270,7 +270,7 @@ beacon key    = <span id="apikey">…</span>
 </main>
 
 <footer class="foot">
-  <span>entropynet · sealed front-ends on solana</span>
+  <span>PHPNET · sealed front-ends on solana</span><span class="dim">PHPNET is an independent project, not affiliated with PHP or php.net.</span>
   <span>ca <code id="ca2">not launched yet</code></span>
   <span><a href="https://github.com/nostalgicgarethdev/entropynet" rel="noopener">github</a> · <a href="https://x.com/entropynet_" target="_blank" rel="noopener">x @entropynet_</a></span>
   <span class="dim">beacon key <code id="fkey">…</code></span>

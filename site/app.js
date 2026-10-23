@@ -5,7 +5,7 @@ const hex = (b) => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0
 const unhex = (h) => new Uint8Array(h.match(/../g).map(x => parseInt(x, 16)));
 const sha = async (data) => hex(await crypto.subtle.digest('SHA-256', typeof data === 'string' ? enc.encode(data) : data));
 const PERIOD = 3, GENESIS = 1792612800;
-const WM = ["███████╗███╗   ██╗████████╗██████╗  ██████╗ ██████╗ ██╗   ██╗███╗   ██╗███████╗████████╗", "██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗╚██╗ ██╔╝████╗  ██║██╔════╝╚══██╔══╝", "█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║   ██║██████╔╝ ╚████╔╝ ██╔██╗ ██║█████╗     ██║   ", "██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║   ██║██╔═══╝   ╚██╔╝  ██║╚██╗██║██╔══╝     ██║   ", "███████╗██║ ╚████║   ██║   ██║  ██║╚██████╔╝██║        ██║   ██║ ╚████║███████╗   ██║   ", "╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   ╚═╝  ╚═══╝╚══════╝   ╚═╝   "];
+const WM = ["██████╗ ██╗  ██╗██████╗ ███╗   ██╗███████╗████████╗", "██╔══██╗██║  ██║██╔══██╗████╗  ██║██╔════╝╚══██╔══╝", "██████╔╝███████║██████╔╝██╔██╗ ██║█████╗     ██║   ", "██╔═══╝ ██╔══██║██╔═══╝ ██║╚██╗██║██╔══╝     ██║   ", "██║     ██║  ██║██║     ██║ ╚████║███████╗   ██║   ", "╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═══╝╚══════╝   ╚═╝   "];
 
 /* ---------- CA strip ---------- */
 if (CFG.ca) { $('#ca').textContent = CFG.ca; $('#ca2').textContent = CFG.ca; const b = $('#cacopy'); b.disabled = false;
@@ -171,7 +171,7 @@ const fmtT = (s) => new Date(s * 1000).toLocaleTimeString([], { hour: '2-digit',
 let LIVE = false;
 const post = async (body) => (await fetch('/api/launch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })).json();
 
-/* wallet: the creator's own browser wallet signs and pays. entropynet never holds a key. */
+/* wallet: the creator's own browser wallet signs and pays. PHPNET never holds a key. */
 const provider = () => window.phantom?.solana || window.solflare || window.backpack?.solana || window.solana || null;
 let wallet = null;
 async function connectWallet() {
@@ -313,8 +313,8 @@ function renderSeal(m) {
   const M = { ok: '<span class="mk-ok">[OK]</span>  ', warn: '<span class="mk-warn">[warn]</span>', star: '[*]  ', go: '[>]  ' };
   const anc = st.anchor_status || 'checking';
   $('#sealstatus').innerHTML = [
-    `<span class="dim">visitor@entropynet.space:~</span> <span class="hl">[${sigOk ? 'sealed' : 'UNSEALED'}]</span>`,
-    `<span class="dim">$</span> entropynet status`,
+    `<span class="dim">visitor@phpnet.xyz:~</span> <span class="hl">[${sigOk ? 'sealed' : 'UNSEALED'}]</span>`,
+    `<span class="dim">$</span> phpnet status`,
     ``,
     `${M.star} release     ${short(st.id, 16)}`,
     `${M.star} files root  ${short(st.files_root, 16)}`,
@@ -351,7 +351,7 @@ $('#ttest').onclick = async () => {
   // Load it in a hidden frame so only the frame gets the block screen, not this page.
   const f = document.createElement('iframe'); f.style.cssText = 'width:100%;height:340px;border:1px solid var(--line);margin-top:8px;background:#17171a';
   f.src = '/tamper-test/?t=' + Date.now();
-  out.innerHTML = '<span class="dim">$</span> entropynet tamper-test\n[*]   target   /tamper-test/wallet-widget.js\n[arm ] server   swapped in a fake "drainer" (harmless)\n[>]   fetch    frame requests the widget…';
+  out.innerHTML = '<span class="dim">$</span> phpnet tamper-test\n[*]   target   /tamper-test/wallet-widget.js\n[arm ] server   swapped in a fake "drainer" (harmless)\n[>]   fetch    frame requests the widget…';
   out.after(f); f.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   $('#ttest').disabled = true; setTimeout(() => { $('#ttest').disabled = false; loadFeed(); }, 2500);
   setTimeout(() => { try { const w = f.contentWindow.__entropynetWidget; out.innerHTML += w && /FAKE/.test(w) ? '\n<span class="mk-bad">[fire]</span>  ran      the fake script ran. seal NOT active.' : w ? '\n<span class="mk-warn">[warn]</span>  served   the sealed widget, no swap seen' : '\n[fire]  hash     sha256 ≠ sealed hash\n<span class="mk-ok">[OK]</span>    blocked  never ran · reported to the tamper feed'; } catch { out.innerHTML += '\n<span class="mk-ok">[OK]</span>    blocked  see the block screen below'; } }, 1800);
@@ -382,7 +382,7 @@ $('#sdir').onchange = async (e) => {
 /* ---------- check a site ---------- */
 async function runCheck(u) {
   const out = $('#ckout'); if (!u) return;
-  out.textContent = `$ entropynet check ${u}\n[*] fetching…`;
+  out.textContent = `$ phpnet check ${u}\n[*] fetching…`;
   try {
     const r = await (await fetch('/api/check?url=' + encodeURIComponent(u))).json();
     if (r.error) { out.innerHTML = `<span class="mk-bad">[!]</span> ${esc(r.error)}`; return; }
@@ -394,15 +394,15 @@ async function runCheck(u) {
     const rsn = String(r.reason || '').slice(0, RW - 3), rel = r.release ? 'release ' + r.release.slice(0, 24) + '…' : '';
     const chk = 'checked ' + String(r.checked_at || '').replace('T', ' ').slice(0, 19) + (r.cached ? ' (cached)' : '');
     const hp = r.sealed ? '[*] SEALED' : '[!] NOT SEALED';
-    out.innerHTML = `<span class="dim">$</span> entropynet check ${esc(r.origin || r.input || u)}\n${rows}\n\n` + [
+    out.innerHTML = `<span class="dim">$</span> phpnet check ${esc(r.origin || r.input || u)}\n${rows}\n\n` + [
       '╭─ receipt ' + '─'.repeat(RW - 10) + '╮',
       rl(head, hp), rl(esc(rsn), rsn), ...(rel ? [rl('<span class="dim">' + esc(rel) + '</span>', rel)] : []),
       rl('<span class="dim">' + esc(chk) + '</span>', chk),
-      '╰' + '─'.repeat(RW - 13) + ' entropynet ─╯'].join('\n') + tx;
+      '╰' + '─'.repeat(RW - 13) + ' phpnet ─╯'].join('\n') + tx;
   } catch { out.innerHTML = '<span class="mk-bad">[!]</span> check failed, try again'; }
 }
 $('#ckform').addEventListener('submit', e => { e.preventDefault(); const u = $('#ckurl').value.trim(); location.hash = '#check/' + encodeURIComponent(u); });
-$('#ckdemo').addEventListener('click', () => { $('#ckurl').value = 'https://entropynet.space'; location.hash = '#check/' + encodeURIComponent('https://entropynet.space'); });
+$('#ckdemo').addEventListener('click', () => { $('#ckurl').value = 'https://phpnet.xyz'; location.hash = '#check/' + encodeURIComponent('https://phpnet.xyz'); });
 const ckFromHash = () => { const k = location.hash.match(/^#check\/mkpage\/([^/]+)\/?([^/]*)\/?(.*)$/); if (k) { $('#mkbox').hidden = false; const f = $('#mkform'); f.mint.value = k[1]; f.ticker.value = decodeURIComponent(k[2] || ''); f.name.value = decodeURIComponent(k[3] || ''); f.slug.value ||= (decodeURIComponent(k[2] || '') || k[1].slice(0, 8)).toLowerCase().replace(/[^a-z0-9-]/g, ''); return; } const m = location.hash.match(/^#check\/(.+)/); if (m) { const u = decodeURIComponent(m[1]); $('#ckurl').value = u; runCheck(u); } };
 ckFromHash(); addEventListener('hashchange', ckFromHash);
 
@@ -424,7 +424,7 @@ $('#mkform').addEventListener('submit', async (e) => {
     const r = await (await fetch('/api/site', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...d, signature: hex }) })).json();
     if (!r.ok) throw new Error(r.error);
     lastPage = r.page;
-    o.innerHTML = `<span class="mk-ok">[OK]</span>  page   <a href="/s/${esc(d.slug)}" target="_blank">entropynet.space/s/${esc(d.slug)}</a>\n<span class="mk-ok">[OK]</span>  code   sealed 2-of-3 (entropynet release)\n<span class="mk-ok">[OK]</span>  content signed by ${esc(creator.slice(0, 4))}…${esc(creator.slice(-4))}\n[*]   optional: record it on solana (${esc(r.page.cluster)}), your wallet pays the ~0.000005 SOL fee <button class="btn ghost" id="mkrec">record</button>`;
+    o.innerHTML = `<span class="mk-ok">[OK]</span>  page   <a href="/s/${esc(d.slug)}" target="_blank">phpnet.xyz/s/${esc(d.slug)}</a>\n<span class="mk-ok">[OK]</span>  code   sealed 2-of-3 (entropynet release)\n<span class="mk-ok">[OK]</span>  content signed by ${esc(creator.slice(0, 4))}…${esc(creator.slice(-4))}\n[*]   optional: record it on solana (${esc(r.page.cluster)}), your wallet pays the ~0.000005 SOL fee <button class="btn ghost" id="mkrec">record</button>`;
     $('#mkrec').onclick = () => recordPage(lastPage).catch(x => o.innerHTML += `\n<span class="mk-bad">[!]</span> ${esc(x.message)}`);
   } catch (x) { o.innerHTML = `<span class="mk-bad">[!]</span> ${esc(x.message || x)}`; }
 });

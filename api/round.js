@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const q = req.query.n;
     if (q === 'info') {
       res.setHeader('cache-control', 's-maxage=60');
-      return res.json({ name: 'EntropyNet beacon', version: 1, period_seconds: PERIOD, genesis: GENESIS, nodes: NODES, public_key: publicKeyHex(), signature: 'ed25519', current_round_by_clock: roundAt(),
+      return res.json({ name: 'PHPNET beacon', version: 1, period_seconds: PERIOD, genesis: GENESIS, nodes: NODES, public_key: publicKeyHex(), signature: 'ed25519', current_round_by_clock: roundAt(),
         message_format: 'entropynet/v1|round|prev_round|prev_randomness|mix|slot|blockhash|time ; randomness=sha256(message) ; signature=ed25519(message+"|"+randomness) ; mix=sha256(concat(reveal bytes)) ; commit=sha256(reveal bytes)' });
     }
     if (!q || q === 'latest') {

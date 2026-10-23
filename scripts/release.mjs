@@ -22,7 +22,7 @@ fs.copyFileSync(path.join(root, 'packages/verifier/test-fixtures/wallet-widget.s
 fs.rmSync(path.join(stage, RELEASE_PATH.slice(1)), { force: true });
 
 let prev = null; try { prev = JSON.parse(fs.readFileSync(path.join(site, RELEASE_PATH.slice(1)), 'utf8')).id; } catch {}
-let r = await draft(stage, { prev, uri: 'https://entropynet.space' + RELEASE_PATH });
+let r = await draft(stage, { prev, uri: 'https://phpnet.xyz' + RELEASE_PATH });
 for (const k of keys) r = sign(r, k);
 const c = check(r, policy, stage);
 if (!c.ok) { console.error('release fails policy:', c.reasons); process.exit(1); }

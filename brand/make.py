@@ -1,4 +1,4 @@
-# EntropyNet brand assets. python3 brand/make.py  -> /workspace/deliverables/entropynet/
+# PHPNET brand assets. python3 brand/make.py  -> /workspace/deliverables/phpnet/
 import hashlib, json, os
 from PIL import Image, ImageDraw, ImageFont
 BG=(242,240,233); PAPER=(248,247,242); INK=(23,23,26); DIM=(167,163,149); MID=(85,83,77); ACC=(176,68,27); LINE=(217,213,201)
@@ -6,7 +6,7 @@ FD='/usr/share/fonts/truetype/sand-box/google/IBM Plex Mono/'
 FONT=FD+'IBMPlexMono-Regular.ttf'; FONTM=FD+'IBMPlexMono-Medium.ttf'
 HERE=os.path.dirname(os.path.abspath(__file__))
 WM=json.load(open(os.path.join(HERE,'wordmark.json')))
-OUT='/workspace/deliverables/entropynet/'; os.makedirs(OUT,exist_ok=True)
+OUT='/workspace/deliverables/phpnet/'; os.makedirs(OUT,exist_ok=True)
 seed=hashlib.sha256(b'entropynet').digest()
 def H(*a): return hashlib.sha256(seed+bytes(a)).digest()[0]
 
@@ -83,7 +83,7 @@ def card(W,H_,tag,name):
     field(d,m+12*s,fy,cols,rows,cw,lh,f,name.encode())
     d.line([(m,fy-14*s),(W-m,fy-14*s)],fill=LINE,width=1)
     frame(d,m,m,W-m,H_-m,lw)
-    label(d,m+22*s,m,'entropynet/v1',f,MID,BG); labelr(d,W-m-22*s,m,'[*] sealed front-ends',f,ACC,BG)
+    label(d,m+22*s,m,'phpnet.xyz',f,MID,BG); labelr(d,W-m-22*s,m,'[*] sealed front-ends',f,ACC,BG)
     label(d,m+22*s,H_-m,'est. oct 21 2026',f,MID,BG); labelr(d,W-m-22*s,H_-m,'2-of-3 · solana mainnet',f,MID,BG)
     cols=len(WM[0]); wcw=(W-2*m-120*s)/cols; wch=wcw*1.55
     ww,wh=wordmark(d,(W-cols*wcw)/2,m+48*s,wcw,wch,max(1,int(1.6*s)))

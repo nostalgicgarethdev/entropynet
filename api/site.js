@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     if (cur && cur.creator !== d.creator) return res.status(409).json({ error: 'that slug belongs to another wallet' });
     const page = { spec: 'entropynet-site/v1', ...d, message_sha256: sha(msg), signature: sigHex, template_release: (await getJSON('seals/latest.json'))?.id || null, record: cur && cur.message_sha256 === sha(msg) ? cur.record : null, cluster: POLICY.anchor_cluster || 'devnet' };
     await putJSON(`sites/${d.slug}.json`, page, true);
-    return res.json({ ok: true, url: `https://entropynet.space/s/${d.slug}`, page });
+    return res.json({ ok: true, url: `https://phpnet.xyz/s/${d.slug}`, page });
   } catch (e) { return res.status(400).json({ error: 'bad request' }); }
 }
 function b58sig(s) { let n = 0n; for (const c of s) { const i = A58.indexOf(c); if (i < 0) throw new Error(); n = n * 58n + BigInt(i); } return Buffer.from(n.toString(16).padStart(128, '0'), 'hex'); }

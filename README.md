@@ -1,21 +1,23 @@
-![entropynet](docs/social-preview.png)
+![PHPNET](docs/social-preview.png)
 
 ```
 --------------------------------------
 ☆ Sign Everything                    ☆
 ☆             Trust No Server        ☆
 --------------------------------------
-EST. OCT 21 2026 · sealed front-ends
+PHPNET · EST. OCT 21 2026 · sealed front-ends
 
-visitor@entropynet.space:~ [sealed]
-$ entropynet status
+visitor@phpnet.xyz:~ [sealed]
+$ phpnet status
 [*]    release     a website that stays safe even when its server is hacked
 [OK]   threshold   2 of 3 team keys
 [OK]   verifier    checking every page, script, style
 [fire] /app.js     sha256 mismatch  ->  blocked, reported
 ```
 
-Live: https://entropynet.space · X: [@entropynet_](https://x.com/entropynet_)
+PHPNET is an independent project, not affiliated with PHP or php.net.
+
+Live: https://phpnet.xyz (formerly entropynet.space) · X: [@entropynet_](https://x.com/entropynet_)
 
 Your team signs every release. Every visitor's browser checks every page, script
 and style against that signature and refuses anything else, before it runs.
@@ -27,7 +29,7 @@ The same day, the web stack cracked open:
 
 - **Hosts got popped.** Railway said an unauthorized third party may have accessed encrypted customer environment variables and decrypted some of them, told every user to roll their env vars, and paused deployments. ([Railway disclosure](https://blog.railway.com/p/security-disclosure-wednesday-october-21st))
 - **Runtimes got patched.** Node.js released v22.23.4, v24.22.1 and v26.12.1, fixing among others CVE-2026-111497 (Brotli decoder out-of-bounds write, permits RCE), two TLS hostname bypasses (CVE-2026-105483, CVE-2026-106069) and CVE-2026-106074, where `randomUUID()`/`randomInt()` entropy caches got saved into startup snapshots and SEAs so every process repeated the same values. ([nodejs.org](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases))
-- **PHP research flooded in.** CVE-2026-109618 / 109619 drew urgent patch advisories ([CISA](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching)). Independent research (J4ck3LSyN, "PHP up 2026") pushes back on the early RCE claims and describes a medium-severity memory-safety bug in prefork SAPIs instead. entropynet makes no claim either way and patches nothing: patch PHP and Node.
+- **PHP research flooded in.** CVE-2026-109618 / 109619 drew urgent patch advisories ([CISA](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching)). Independent research (J4ck3LSyN, "PHP up 2026") pushes back on the early RCE claims and describes a medium-severity memory-safety bug in prefork SAPIs instead. PHPNET makes no claim either way and patches nothing: patch PHP and Node.
 
 Small teams get burned in the gap between leak and patch. In crypto that gap is
 where drainers ship: Ledger Connect Kit (2023) and BadgerDAO (2021) were
@@ -114,3 +116,6 @@ scripts/            release.mjs (seal the site), check.mjs, seal-test.mjs
 
 `npm test` runs the beacon check and the seal tests. CI example: `docs/ci.yml.example`.
 See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md). License: MIT.
+
+
+Naming note: the project was renamed EntropyNet → PHPNET. Protocol identifiers (`entropynet-seal/v1`, `entropynet-site/v1`, `entropynet/v1` beacon messages), the `npx entropynet` CLI package and this repo name are unchanged so existing seals and verifiers keep working.

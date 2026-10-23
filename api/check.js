@@ -32,7 +32,7 @@ async function get(url, origin) {
     await safeUrl(u);
     const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), TIMEOUT);
     try {
-      const r = await fetch(u, { redirect: 'manual', signal: ctl.signal, headers: { 'user-agent': 'entropynet-check/1 (+https://entropynet.space/#check; passive seal check)', accept: '*/*' } });
+      const r = await fetch(u, { redirect: 'manual', signal: ctl.signal, headers: { 'user-agent': 'entropynet-check/1 (+https://phpnet.xyz/#check; passive seal check)', accept: '*/*' } });
       if (r.status >= 300 && r.status < 400 && r.headers.get('location')) {
         const n = new URL(r.headers.get('location'), u);
         if (origin && n.origin !== origin) return { status: r.status, url: u.href, offsite: n.href };
@@ -76,11 +76,11 @@ export async function runCheck(input) {
   const id = sha([SPEC, rel.files_root, rel.beacon.round, rel.beacon.randomness, rel.created, rel.prev || ''].join('\n'));
   if (root !== rel.files_root || id !== rel.id) { step(false, 'manifest', root !== rel.files_root ? 'files_root does not match the file list' : 'release id does not match its contents'); return out(false, 'bad manifest', { origin }); }
   step(true, 'manifest', `${nf} files · release ${id.slice(0, 16)}… · files_root ${root.slice(0, 16)}…`);
-  const isUs = origin === 'https://entropynet.space';
+  const isUs = origin === 'https://phpnet.xyz' || origin === 'https://www.phpnet.xyz' || origin === 'https://entropynet.space';
   try { const r = await get(origin + '/seal/policy.json', origin); if (r.status !== 200) throw 0; pol = JSON.parse(r.body.toString('utf8')); } catch {}
   if (isUs) { if (!pol || JSON.stringify(pol.signers) !== JSON.stringify(PINNED.signers) || pol.threshold !== PINNED.threshold) { step(false, 'policy', 'published policy differs from the pinned entropynet policy'); return out(false, 'bad signatures', { origin }); } }
   if (!pol || !Array.isArray(pol.signers) || !Number.isInteger(pol.threshold) || pol.threshold < 1 || pol.threshold > pol.signers.length) { step(false, 'policy', 'no signer policy at /seal/policy.json'); return out(false, 'missing seal', { origin }); }
-  step(true, 'policy', `${pol.threshold}-of-${pol.signers.length} signers · ${isUs ? 'pinned by entropynet' : 'published by the site'}`);
+  step(true, 'policy', `${pol.threshold}-of-${pol.signers.length} signers · ${isUs ? 'pinned by PHPNET' : 'published by the site'}`);
   const good = new Set((rel.signatures || []).filter(s => pol.signers.includes(s.signer) && verify(s.signer, s.sig, `${SPEC}:${id}`)).map(s => s.signer));
   if (good.size < pol.threshold) { step(false, 'signatures', `only ${good.size} of ${pol.threshold} valid signatures`); return out(false, 'bad signatures', { origin }); }
   step(true, 'signatures', `${good.size} of ${pol.threshold} valid ed25519 signatures`);
