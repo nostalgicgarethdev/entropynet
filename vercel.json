@@ -67,14 +67,14 @@
  },
  "redirects": [
   {
-   "source": "/:path*",
+   "source": "/(.*)",
    "has": [
     {
      "type": "host",
      "value": "entropynet.space"
     }
    ],
-   "destination": "https://www.phpnet.xyz/:path*",
+   "destination": "https://www.phpnet.xyz/$1",
    "permanent": true
   }
  ]
