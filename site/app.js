@@ -8,8 +8,8 @@ const PERIOD = 3, GENESIS = 1792612800;
 const WM = ["███████╗███╗   ██╗████████╗██████╗  ██████╗ ██████╗ ██╗   ██╗███╗   ██╗███████╗████████╗", "██╔════╝████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗╚██╗ ██╔╝████╗  ██║██╔════╝╚══██╔══╝", "█████╗  ██╔██╗ ██║   ██║   ██████╔╝██║   ██║██████╔╝ ╚████╔╝ ██╔██╗ ██║█████╗     ██║   ", "██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗██║   ██║██╔═══╝   ╚██╔╝  ██║╚██╗██║██╔══╝     ██║   ", "███████╗██║ ╚████║   ██║   ██║  ██║╚██████╔╝██║        ██║   ██║ ╚████║███████╗   ██║   ", "╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   ╚═╝  ╚═══╝╚══════╝   ╚═╝   "];
 
 /* ---------- CA strip ---------- */
-if (CFG.ca) { $('#ca').textContent = CFG.ca; $('#ca2').textContent = CFG.ca; const b = $('#cacopy'); b.disabled = false;
-  b.onclick = async () => { await navigator.clipboard.writeText(CFG.ca); b.textContent = 'copied'; setTimeout(() => b.textContent = 'copy', 1400); }; }
+document.querySelectorAll('.cacopy').forEach(b => { const ca = b.dataset.ca || CFG.ca; if (!ca) return; b.disabled = false;
+  b.onclick = async () => { try { await navigator.clipboard.writeText(ca); } catch { const t = document.createElement('textarea'); t.value = ca; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); } b.textContent = 'copied'; setTimeout(() => b.textContent = 'copy', 1400); }; });
 $('#fkey').textContent = CFG.beaconPublicKey.slice(0, 16) + '…'; $('#apikey').textContent = CFG.beaconPublicKey;
 
 /* ---------- tabs ---------- */
