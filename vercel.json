@@ -64,18 +64,5 @@
   "api/*.js": {
    "maxDuration": 30
   }
- },
- "redirects": [
-  {
-   "source": "/:path*",
-   "has": [
-    {
-     "type": "host",
-     "value": "entropynet.space"
-    }
-   ],
-   "destination": "https://www.phpnet.xyz/:path*",
-   "permanent": true
-  }
- ]
+ }
 }
