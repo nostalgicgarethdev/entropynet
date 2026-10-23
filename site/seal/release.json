@@ -1,27 +1,27 @@
 {
  "spec": "entropynet-seal/v1",
- "created": 1792768574,
+ "created": 1792771551,
  "uri": "https://entropynet.space/seal/release.json",
- "prev": "5b47a8252b9759fb2bcffea7f9a7392a6e2cdcf93c8c2a30e4375271408da229",
+ "prev": "20b8a3585a5ff10918accf8d23f3121fa47c5a83a13e827da0ccc25d6e38ede2",
  "beacon": {
-  "round": 51924,
-  "randomness": "4b052a00c09b05bed92284cb51025dd5b448ef9876847f5a2a91920af53300d3",
+  "round": 52916,
+  "randomness": "db9888b5e07cafd450624804632dd93b21de1b9d89d69719d1a14937873a29a1",
   "url": "https://entropynet.space"
  },
- "files_root": "1da271c15db4ba5107f211602840e6db8af08f2d1d153f5f376fef87bb7e429e",
+ "files_root": "0f85f7eb5ab7a94c0eb0f949cd1696ab94ddf2b1d095728093026008ebb0b6b0",
  "files": {
-  "/app.js": "b2e9fe274545926e58c6871d938aab4ee99eed535c96338e99a4ecba2958dee6",
+  "/app.js": "8aa4b34f8adae852645ac7b6de31c3a0adc5db7bc1e8ce118fd7ac3f25f6515d",
   "/apple-touch-icon.png": "29e7a0ecf3468a26d46840ad6f8e176de67e24c0dc7beb313b3106d2a85799d3",
-  "/config.js": "49d18a26b3c9d6178ca190a9dee030dc9eb71572059a8ece06c05753516be35e",
+  "/config.js": "e178b0264616109e6dadffc2401598806d890464caa3c092bb2414373e8afd4a",
   "/favicon-32.png": "dd647517e70ec2794ac43734cdc9b370a1ccad9f6427f70e6c9487b87028709e",
   "/favicon.ico": "6bb3dc9a7f88419f05a9f1840ded3638e13bf8da7b89ee30fe2cfb37f369e123",
-  "/index.html": "c68848678c1e9e418da48e2926a68ee70943d1ece55dc4bf7fd998b41f102237",
+  "/index.html": "a9e6aace9bfb1f1c688736246ca2d2c1e153d1bea18a13d2c6f6440ab79cadf3",
   "/logo.png": "66e9a9086002368f2e3ed5b1044e12937f8204c6fdba73e5672efd366a020757",
   "/og.png": "ccfaf02425f1d82734c658bc79c91407afec117f0e57f761319bdf72f2a2de5a",
   "/s/index.html": "38bebe1753e61e15b936283441ea86da8bd6bd0bbd960335d6ae4507f10fb83e",
   "/s/mini.js": "d7411198854ebeca7348978f7081564af5f8e4a36f41541faea54dbcb9b54954",
   "/seal/policy.json": "b9714b760fd308b6b0e8ac4197dd9474b8b354093f163c3c11f975c530a25ca0",
-  "/styles.css": "d3e6864b1db0d55674ad0fe2b6037ad482b123f812032afe190231a5dbd73965",
+  "/styles.css": "10ca5b9124dee6819738b1a8107096676d646a231081b8c3de63d1a3413bed48",
   "/sw.js": "3b52cdfbe6cc4e59e7c960d70798bc6ac7ec95130493caf4ba2f39f0f86bf657",
   "/tamper-test/index.html": "a70bf3be737a8f4676e042bc84b7bbc288fb42642f01c53d73dc5406b70ea90a",
   "/tamper-test/wallet-widget.js": "cfa9535f5aaeae73918ff275517db4631057f2597e1112621e21e936a28678dd"
@@ -29,19 +29,19 @@
  "signatures": [
   {
    "signer": "J5nybktmcYMC1mgviFTPVBsDEBqDQ48of1597ouQF6BC",
-   "sig": "1046279b4337ba029400177d1872a4e05a9bd8cb645a57a0c7a0aea4f5161f58784f45a27bdb522f3a27c2c64564d4305208cb68863e4b088391b5532f5f4a0c"
+   "sig": "ed51aab9e210bab34d40074d46273caa5db023526c7ed95d1cbb47c48fa4fe73c4b7815b40b1e14ca85aea5104543776400465af4a95fc8d4dbf194a624e2407"
   },
   {
    "signer": "FjmNawh7JvwBCbjzLZaVPVBeVnHKLTNyeUAoDDe7cGza",
-   "sig": "ff78b92504a5515cd34912d2a21519d2a205e1134b1d03e86fbf7ddb99337613bab7899a0061ee7e8444791679f2af1015908ecb0f27d116ae9b1016c6bf6e06"
+   "sig": "45ab076500e1fba1b6017f0ea6bb6057a2b76c80b4f7d0a1103cd477741edd6f732c0c1680db689e27e700d0ddeb54455dfe5b312bf432f5a3936cb9af941d0e"
   }
  ],
  "anchor": {
   "cluster": "mainnet",
   "program": "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo",
-  "tx": "LP5rNxgdmHTnM66q7AGSmfUHEjA9JLdNU1KKLS7UFm37qzttaGYxm9XFVT9fpCiqBAXUhYdcJsaYVEwLgSktQ27",
+  "tx": "3BuqtptaxCRuBWFwRQ2J5EdSx616eR91qa52wmQZ2Vihz3VAGeXurE7wHnBWJmqyF8ChKEXZ9THR8wro69yrnxD1",
   "payer": "3KNNm6PRU9gx7EMebCHdnS23sgDCXZ2AJpPdw3eQ6wBJ",
-  "memo": "entropynet-seal/v1 release=20b8a3585a5ff10918accf8d23f3121fa47c5a83a13e827da0ccc25d6e38ede2 files=1da271c15db4ba5107f211602840e6db8af08f2d1d153f5f376fef87bb7e429e round=51924 uri=https://entropynet.space/seal/release.json"
+  "memo": "entropynet-seal/v1 release=51bead56a8d83b5793b3e6805bb0e23e9fa37cd4cde86e9af6ccc8530a8f227c files=0f85f7eb5ab7a94c0eb0f949cd1696ab94ddf2b1d095728093026008ebb0b6b0 round=52916 uri=https://entropynet.space/seal/release.json"
  },
- "id": "20b8a3585a5ff10918accf8d23f3121fa47c5a83a13e827da0ccc25d6e38ede2"
+ "id": "51bead56a8d83b5793b3e6805bb0e23e9fa37cd4cde86e9af6ccc8530a8f227c"
 }

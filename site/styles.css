@@ -10,11 +10,6 @@ code{font-family:var(--mono)}
 .ca-strip code{max-width:60vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ca-strip button,.btn{font:inherit;font-size:12px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:3px 10px;cursor:pointer;border-radius:0}
 .ca-strip button:disabled{opacity:.35;cursor:default}
-.ca-strip .tk,.foot .tk{color:var(--acc);font-weight:500;text-decoration:none}.ca-strip .tk:hover,.foot .tk:hover{text-decoration:underline}
-.ca-strip .pf{color:var(--mid);text-decoration:none;white-space:nowrap}.ca-strip .pf:hover{color:var(--ink)}
-.ca-strip code{color:var(--ink)}
-.cacopy.mini{font:inherit;font-size:11px;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:1px 7px;cursor:pointer;border-radius:0}.cacopy.mini:hover{background:var(--ink);color:var(--paper)}
-@media(max-width:600px){.ca-strip{gap:.55em;padding:6px 10px;font-size:11px}.ca-strip .k,.ca-strip .pf{display:none}.ca-strip code{max-width:42vw}}
 .top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:22px;padding:12px 28px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .brand{text-decoration:none;font-weight:500;letter-spacing:-.01em}.brand b{color:var(--acc);font-weight:500}
 .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}.tabs::-webkit-scrollbar{display:none}
